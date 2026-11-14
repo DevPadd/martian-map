@@ -1,5 +1,4 @@
 ![alt text](.github/assets/design-1.png)
-![alt text](.github/assets/design-2.png)
 
 ## what the hell is this?
 
@@ -8,6 +7,8 @@ A web-based interactive Mars exploration map that is designed to help future ast
 The application combines scientific data from multiple NASA missions into one interactive map, allowing users to explore Mars, discover geographical landmarks, access scientific information, and identify potential exploration destinations.
 
 Instead of simply displaying a map, it tells astronauts what is around them, what makes each location scientifically interesting, and what they should know before exploring it.
+
+Demo: https://martian-map-eight.vercel.app/
 
 ## Tech stack used
 
