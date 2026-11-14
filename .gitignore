@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# obsidian notes
+.obsidian
+
 # testing
 /coverage
 
