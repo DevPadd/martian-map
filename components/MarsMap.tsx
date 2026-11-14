@@ -9,6 +9,8 @@ import WMTS, { optionsFromCapabilities } from "ol/source/WMTS.js";
 import WMTSCapabilities from "ol/format/WMTSCapabilities.js";
 import { getCenter } from "ol/extent.js";
 import { get as getProjection } from "ol/proj.js";
+import { unByKey } from "ol/Observable.js";
+import type { EventsKey } from "ol/events.js";
 import proj4 from "proj4";
 import { register } from "ol/proj/proj4.js";
 
@@ -26,11 +28,16 @@ export default function MarsMap() {
   const mapInstance = useRef<Map | null>(null);
 
   const [status, setStatus] = useState("Loading Mars imagery...");
+  const [cursorCoordinates, setCursorCoordinates] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!mapElement.current) return;
 
     let cancelled = false;
+    let pointerMoveKey: EventsKey | undefined;
 
     async function initializeMap() {
       try {
@@ -85,7 +92,7 @@ export default function MarsMap() {
           attributions: "Imagery: NASA / USGS / MRO CTX",
         });
         imagerySource.on("tileloadend", () => {
-          setStatus("Jezero imagery visible");
+          setStatus("マルスマップが読み込まれました。"); // "Mars map loaded." in Japanese
         });
         imagerySource.on("tileloaderror", () => {
           console.error("A NASA WMTS imagery tile failed to load.");
@@ -105,6 +112,13 @@ export default function MarsMap() {
           target: mapElement.current,
           layers: [imageryLayer],
           view,
+        });
+
+        pointerMoveKey = map.on("pointermove", ({ coordinate }) => {
+          setCursorCoordinates({
+            latitude: coordinate[1],
+            longitude: coordinate[0],
+          });
         });
 
         view.fit(extent, {
@@ -130,6 +144,9 @@ export default function MarsMap() {
 
     return () => {
       cancelled = true;
+      if (pointerMoveKey) {
+        unByKey(pointerMoveKey);
+      }
       mapInstance.current?.setTarget(undefined);
       mapInstance.current = null;
     };
@@ -138,9 +155,15 @@ export default function MarsMap() {
   return (
     <div className="relative h-screen w-full bg-white">
       <div ref={mapElement} className="h-full w-full" />
-
-      <div className="absolute bottom-4 left-4 z-10 border border-orange-500/40 bg-black/80 px-4 py-2 text-xs text-orange-400">
-        {status}
+      <div className="absolute flex flex-column items-center justify-between left-0 top-0 right-0 z-10 border border-red-500/40 bg-black/80 px-4 py-2 text-xs text-red-500">
+        <h1 className="text-lg">M.A.R.S.</h1>
+        <div className="flex flex-column gap-4 align-items">
+          <p>LAT: {cursorCoordinates?.latitude.toFixed(6) ?? "--"}</p>
+          <p>LON: {cursorCoordinates?.longitude.toFixed(6) ?? "--"}</p>
+        </div>
+      </div>
+      <div className="absolute bottom-4 left-4 z-10 border border-red-500/40 bg-black/80 px-4 py-2 text-xs text-red-500">
+        <h1 className="">{status}</h1>
       </div>
     </div>
   );
