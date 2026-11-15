@@ -9,18 +9,14 @@ import Style from "ol/style/Style.js";
 import Text from "ol/style/Text.js";
 
 import { LANDMARK_CATALOG } from "./landmarkCatalog";
-import type { LandmarkCategory, MarsLandmark } from "./landmarkTypes";
+import {
+  LANDMARK_CATEGORY_COLORS,
+  type MarsLandmark,
+} from "./landmarkTypes";
 
-const CATEGORY_COLORS: Record<LandmarkCategory, string> = {
-  crater: "#f97316",
-  delta: "#38bdf8",
-  mountain: "#facc15",
-  canyon: "#c084fc",
-  misc: "#22c55e",
-};
-
-function createLandmarkFeature(landmark: MarsLandmark): Feature<Point> {
-  const color = CATEGORY_COLORS[landmark.category];
+export function createLandmarkFeature(landmark: MarsLandmark): Feature<Point> {
+  const color =
+    landmark.markerColor ?? LANDMARK_CATEGORY_COLORS[landmark.category];
   const feature = new Feature({
     geometry: new Point(landmark.coordinates),
     id: landmark.id,
@@ -50,9 +46,13 @@ function createLandmarkFeature(landmark: MarsLandmark): Feature<Point> {
   return feature;
 }
 
-export function createLandmarkLayer(): VectorLayer<VectorSource> {
+export function createLandmarkLayer(
+  customLandmarks: MarsLandmark[] = [],
+): VectorLayer<VectorSource> {
   const source = new VectorSource({
-    features: LANDMARK_CATALOG.map(createLandmarkFeature),
+    features: [...LANDMARK_CATALOG, ...customLandmarks].map(
+      createLandmarkFeature,
+    ),
   });
 
   return new VectorLayer({
@@ -62,4 +62,17 @@ export function createLandmarkLayer(): VectorLayer<VectorSource> {
       title: "Premade Mars landmarks",
     },
   });
+}
+
+export function updateCustomLandmarks(
+  layer: VectorLayer<VectorSource>,
+  customLandmarks: MarsLandmark[],
+): void {
+  const source = layer.getSource();
+  if (!source) return;
+
+  source.clear();
+  source.addFeatures(
+    [...LANDMARK_CATALOG, ...customLandmarks].map(createLandmarkFeature),
+  );
 }

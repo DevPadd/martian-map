@@ -32,6 +32,7 @@ import {
   createInitialMissionDataLayerVisibility,
   createMissionDataLayers,
 } from "./missionDataLayers";
+import { createJezeroStudyAreaLayer } from "./mission/jezeroStudyArea";
 
 const GLOBAL_MARS_LAYER_INDEX = 1;
 
@@ -128,6 +129,8 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
   const environmentMapLayersRef = useRef(
     new Map<string, TileLayer<WMTS>>(),
   );
+  const missionAreaLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+  const missionAreaVisibilityRef = useRef(false);
   const regionalLayerMaxZoomRef = useRef(new Map<string, number>());
   const environmentLayerMaxZoomRef = useRef(new Map<string, number>());
   const missionDataLayerVisibilityRef = useRef(
@@ -146,6 +149,7 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
   );
   const [environmentMapLayerVisibility, setEnvironmentMapLayerVisibility] =
     useState(createInitialEnvironmentMapLayerVisibility);
+  const [missionAreaVisible, setMissionAreaVisible] = useState(false);
   const [missionDataLayerVisibility, setMissionDataLayerVisibility] = useState(
     createInitialMissionDataLayerVisibility,
   );
@@ -257,6 +261,12 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
     },
     [],
   );
+
+  const onMissionAreaVisibilityChange = useCallback((visible: boolean) => {
+    missionAreaVisibilityRef.current = visible;
+    missionAreaLayerRef.current?.setVisible(visible);
+    setMissionAreaVisible(visible);
+  }, []);
 
   const onMissionDataLayerVisibilityChange = useCallback(
     (id: string, visible: boolean) => {
@@ -452,6 +462,8 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
           ),
         );
         const landmarkLayer = createLandmarkLayer();
+        const missionAreaLayer = createJezeroStudyAreaLayer();
+        missionAreaLayer.setVisible(missionAreaVisibilityRef.current);
         for (const [id, layer] of missionDataLayers) {
           layer.setVisible(
             missionDataLayerVisibilityRef.current[id] ?? false,
@@ -466,6 +478,7 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
             ...environmentMapLayers.values(),
             ...missionDataLayers.values(),
             landmarkLayer,
+            missionAreaLayer,
           ],
           view,
           controls: defaultControls({ zoom: false }),
@@ -482,6 +495,7 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
         missionDataLayersRef.current = missionDataLayers;
         regionalMapLayersRef.current = regionalMapLayers;
         environmentMapLayersRef.current = environmentMapLayers;
+        missionAreaLayerRef.current = missionAreaLayer;
         mapInstance.current = map;
         setMap(map);
         setLandmarkLayer(landmarkLayer);
@@ -530,6 +544,7 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
       missionDataLayersRef.current.clear();
       regionalMapLayersRef.current.clear();
       environmentMapLayersRef.current.clear();
+      missionAreaLayerRef.current = null;
       regionalLayerMaxZoomRef.current.clear();
       environmentLayerMaxZoomRef.current.clear();
       globalMaxZoom.current = 0;
@@ -548,6 +563,8 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
     regionalMapLayerVisibility,
     environmentMapLayerVisibility,
     onEnvironmentMapLayerVisibilityChange,
+    missionAreaVisible,
+    onMissionAreaVisibilityChange,
     selectedLayerIndex,
     status,
   };

@@ -19,8 +19,26 @@ body {
   font-family: var(--font-mono);
 }
 
+.ol-viewport::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='90' viewBox='0 0 150 110'%3E%3Cpath d='M75 37v36M57 55h36' fill='none' stroke='%239dffad' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 128px 100px;
+  filter: drop-shadow(0 0 2px rgb(124 255 149 / 60%));
+  opacity: 0.4;
+  pointer-events: none;
+  content: "";
+}
+
+.ol-overlaycontainer,
+.ol-overlaycontainer-stopevent {
+  z-index: 2 !important;
+}
+
 .map {
   position: absolute;
+  z-index: -2;
   top: 0;
   left: 0;
   width: 100%;
@@ -40,6 +58,7 @@ body {
 .mars-distance-control {
   display: flex;
   justify-content: flex-end;
+  z-index: 50;
 }
 
 .mars-distance-button {
@@ -69,11 +88,14 @@ body {
 
 .mars-distance-popup {
   pointer-events: auto;
+  z-index: 50;
 }
 
 .mars-distance-popup-card {
   position: relative;
   box-sizing: border-box;
+  z-index: 50;
+
   width: min(17rem, calc(100vw - 1.5rem));
   border: 1px solid rgb(251 146 60 / 70%);
   border-radius: 0.25rem;
@@ -87,6 +109,7 @@ body {
   padding-right: 1.25rem;
   color: rgb(249, 115, 22);
   font-size: 0.65rem;
+  z-index: 50;
   font-weight: 600;
   letter-spacing: 0.08em;
 }
@@ -96,6 +119,7 @@ body {
   font-family: var(--font-mono);
   font-size: 1rem;
   font-weight: 700;
+  z-index: 50;
 }
 
 .mars-distance-estimates {
@@ -164,12 +188,14 @@ body {
 .mars-distance-popup-help {
   margin-top: 0.4rem;
   color: rgb(254 215 170 / 65%);
+  z-index: 50;
   font-size: 0.65rem;
 }
 
 .mars-distance-popup-close {
   position: absolute;
   top: 0.25rem;
+  z-index: 50;
   right: 0.375rem;
   color: rgb(249, 115, 22);
   font-size: 1.25rem;
@@ -214,4 +240,5 @@ body {
 
 .mars-landmark-popup {
   pointer-events: auto;
+  z-index: 50;
 }

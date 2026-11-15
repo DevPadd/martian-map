@@ -16,7 +16,7 @@ export default function MapToolbar({
   selectedLayerIndex,
 }: MapToolbarProps) {
   return (
-    <div className="absolute left-0 right-0 top-0 z-10 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 border border-orange-500/40 bg-black/90 px-2 py-2 text-xs text-orange-500 sm:flex sm:gap-4 sm:px-4">
+    <div className="absolute left-0 right-0 top-0 z-60 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 border border-orange-500/40 bg-black/90 px-2 py-2 text-xs text-orange-500 sm:flex sm:gap-4 sm:px-4">
       <h1 className="whitespace-nowrap border border-orange-500 px-1 py-1 text-base sm:text-lg">
         <Galaxy className="inline-block h-6 w-6" /> B.C.I.
       </h1>

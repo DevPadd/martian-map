@@ -34,6 +34,82 @@ export const LANDMARK_CATALOG: MarsLandmark[] = [
     images: [],
   },
   {
+    id: "kodiak-butte",
+    name: "Kodiak Butte",
+    category: "mountain",
+    coordinates: [77.41, 18.45],
+    description:
+      "An eroded remnant of Jezero's ancient western delta. Marker location is approximate.",
+    details:
+      "Kodiak Butte is an isolated remnant of the western delta deposits in Jezero Crater. Orbital and rover observations show layered rocks that preserve evidence of sediment deposited by flowing water into an ancient lake. Perseverance imaged the butte during its early exploration of the crater. The marker is approximate because the feature covers an area.",
+    images: [],
+  },
+  {
+    id: "seitah-region",
+    name: "Séítah Region",
+    category: "misc",
+    coordinates: [77.39, 18.39],
+    description:
+      "A rough, sand-covered region of Jezero's crater floor explored by Perseverance. Marker location is approximate.",
+    details:
+      "Séítah is a geologic unit on the floor of Jezero Crater, south of the rover's landing area. Perseverance investigated its rugged terrain and rocks, including the olivine-rich rocks of the Séítah formation. The name refers to a broad region rather than a single point, so this marker is approximate.",
+    images: [],
+  },
+  {
+    id: "maaz-formation",
+    name: "Máaz Formation",
+    category: "misc",
+    coordinates: [77.43, 18.44],
+    description:
+      "A crater-floor rock formation studied near Perseverance's landing area. Marker location is approximate.",
+    details:
+      "The Máaz formation is a mapped rock unit on the floor of Jezero Crater. Perseverance examined its rocks during the early part of the mission; observations indicate an igneous origin, with later alteration by water. The formation extends across an area, so this marker indicates an approximate location rather than a specific outcrop.",
+    images: [],
+  },
+  {
+    id: "artuby-ridge",
+    name: "Artuby Ridge",
+    category: "mountain",
+    coordinates: [77.47, 18.44],
+    description:
+      "A ridge along the margin of Jezero's western delta, examined by Perseverance. Marker location is approximate.",
+    details:
+      "Artuby is a prominent ridge along the front of Jezero's western delta. Its exposed layers provide a view into the delta deposits and their history of sedimentation. Perseverance studied the ridge while exploring the delta front. The marker is approximate because the ridge is a linear feature.",
+    images: [],
+  },
+  {
+    id: "neretva-vallis",
+    name: "Neretva Vallis",
+    category: "canyon",
+    coordinates: [77.3, 18.49],
+    description:
+      "An ancient channel that carried water and sediment toward Jezero Crater's western delta. Marker location is approximate.",
+    details:
+      "Neretva Vallis is an inlet channel that enters Jezero Crater near the western delta. The channel and its deposits are part of the evidence that water once flowed into the crater and may have fed an ancient lake. The marker indicates an approximate section of the channel, not a single feature point.",
+    images: [],
+  },
+  {
+    id: "base-camp",
+    name: "Base Camp",
+    category: "misc",
+    coordinates: [77.4325, 18.4662],
+    description:
+      "Base Camp serving as a hub for exploration of Jezero Crater and its western delta.",
+    details:
+      "L-1=Landing/launch pad 1\n L-2=Landing/launch pad 2 \n T-1= Habitat module\n T-2= greenhouse\n T-3= Lab\n T-4= Storage\n G = power generator (solar panels)\n P= vehicles and rovers parking area",
+    images: [
+      {
+        src: "/landmarks/basecamp-devin.jpeg",
+        alt: "basecamp in jezero crater",
+        caption: "basecamp in jezero crater",
+        attribution: "",
+        sourceUrl: "",
+        width: 640,
+        height: 513,
+      },
+    ],
+  },
+  {
     id: "gale-crater",
     name: "Gale Crater",
     category: "crater",

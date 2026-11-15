@@ -25,6 +25,9 @@ const EARTH_DAY_SECONDS = 86_400;
 
 type MapDistanceControlProps = {
   map: Map | null;
+  isDrawing: boolean;
+  drawingDisabled: boolean;
+  onDrawingChange: (isDrawing: boolean) => void;
 };
 
 function formatDistance(distanceMeters: number): string {
@@ -47,14 +50,18 @@ function formatEarthDays(solCount: number): string {
   return `${earthDays.toFixed(2)} Earth days`;
 }
 
-export default function MapDistanceControl({ map }: MapDistanceControlProps) {
+export default function MapDistanceControl({
+  map,
+  isDrawing,
+  drawingDisabled,
+  onDrawingChange,
+}: MapDistanceControlProps) {
   const popupElement = useRef<HTMLDivElement>(null);
   const source = useRef<VectorSource | null>(null);
   const overlay = useRef<Overlay | null>(null);
   const drawInteraction = useRef<Draw | null>(null);
   const drawEndKey = useRef<EventsKey | undefined>(undefined);
 
-  const [isMeasuring, setIsMeasuring] = useState(false);
   const [distanceMeters, setDistanceMeters] = useState<number | null>(null);
   const [measurementError, setMeasurementError] = useState<string | null>(null);
   const [travelRateKmPerSol, setTravelRateKmPerSol] = useState("");
@@ -86,9 +93,9 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
   }, []);
 
   const cancelMeasurement = useCallback(() => {
-    setIsMeasuring(false);
+    onDrawingChange(false);
     clearMeasurement();
-  }, [clearMeasurement]);
+  }, [clearMeasurement, onDrawingChange]);
 
   useEffect(() => {
     const popup = popupElement.current;
@@ -148,7 +155,7 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
 
   useEffect(() => {
     const measurementSource = source.current;
-    if (!map || !isMeasuring || !measurementSource) return;
+    if (!map || !isDrawing || !measurementSource) return;
 
     const mapTarget = map.getTargetElement();
     if (mapTarget) mapTarget.style.cursor = "crosshair";
@@ -180,7 +187,7 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
       const geometry = feature.getGeometry();
       if (!(geometry instanceof LineString)) {
         setMeasurementError("Could not read the drawn measurement.");
-        setIsMeasuring(false);
+        onDrawingChange(false);
         return;
       }
 
@@ -189,7 +196,7 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
         measurementSource.removeFeature(feature);
         setMeasurementError("Draw a longer line to measure its distance.");
         overlay.current?.setPosition(coordinates.at(-1));
-        setIsMeasuring(false);
+        onDrawingChange(false);
         return;
       }
 
@@ -226,7 +233,7 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
         overlay.current?.setPosition(coordinates[coordinates.length - 1]);
       }
 
-      setIsMeasuring(false);
+      onDrawingChange(false);
     });
 
     drawInteraction.current = draw;
@@ -251,11 +258,11 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
       drawInteraction.current = null;
       drawEndKey.current = undefined;
     };
-  }, [cancelMeasurement, isMeasuring, map]);
+  }, [cancelMeasurement, isDrawing, map, onDrawingChange]);
 
   function startMeasurement(): void {
     clearMeasurement();
-    setIsMeasuring(true);
+    onDrawingChange(true);
   }
 
   return (
@@ -263,11 +270,14 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
       <button
         type="button"
         className="mars-distance-button cursor-pointer z-90 flex  items-center gap-1 border border-orange-400/60 bg-black/90 p-[0.3rem] text-sm font-semibold text-orange-400 shadow-lg shadow-black/40 transition hover:bg-orange-950  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
-        disabled={!map}
-        onClick={isMeasuring ? cancelMeasurement : startMeasurement}
-        aria-pressed={isMeasuring}
+        disabled={!map || (drawingDisabled && !isDrawing)}
+        onClick={isDrawing ? cancelMeasurement : startMeasurement}
+        aria-label={
+          isDrawing ? "Cancel distance measurement" : "Measure Mars distance"
+        }
+        aria-pressed={isDrawing}
       >
-        {isMeasuring ? <X /> : <MapPinPen className="text-orange-400" />}
+        {isDrawing ? <X /> : <MapPinPen className="text-orange-400" />}
       </button>
       <div
         ref={popupElement}

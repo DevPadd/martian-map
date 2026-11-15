@@ -15,7 +15,7 @@ export default function EnvironmentMapLayersControl({
   visibility,
   onVisibilityChange,
 }: EnvironmentMapLayersControlProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <aside className="w-full shrink-0 border border-orange-500/40 bg-black/90 p-2 text-xs text-orange-200 shadow-lg shadow-black/40 sm:p-3">
@@ -74,7 +74,9 @@ export default function EnvironmentMapLayersControl({
                         />
                         <div className="mt-1 flex justify-between gap-2 text-[0.65rem] text-orange-100/60">
                           <span>{layer.scaleLabels[0]}</span>
-                          <span className="text-right">{layer.scaleLabels[1]}</span>
+                          <span className="text-right">
+                            {layer.scaleLabels[1]}
+                          </span>
                         </div>
                       </motion.div>
                     )}

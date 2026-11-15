@@ -6,8 +6,120 @@ export const MARS_CRS = "urn:ogc:def:crs:EPSG::104905";
 const MARS_EQUATORIAL_RADIUS = 3_396_190;
 const MARS_INVERSE_FLATTENING = 169.894447223612;
 const MARS_FLATTENING = 1 / MARS_INVERSE_FLATTENING;
+const MARS_ECCENTRICITY_SQUARED =
+  MARS_FLATTENING * (2 - MARS_FLATTENING);
 const MARS_CRS_DEFINITION =
   `+proj=longlat +a=${MARS_EQUATORIAL_RADIUS} +rf=${MARS_INVERSE_FLATTENING} +no_defs +type=crs`;
+
+function getMarsAuthalicParameters(): {
+  radius: number;
+  eccentricity: number;
+  poleQ: number;
+} {
+  const eccentricity = Math.sqrt(MARS_ECCENTRICITY_SQUARED);
+  const poleQ =
+    1 +
+    ((1 - MARS_ECCENTRICITY_SQUARED) / eccentricity) *
+      Math.atanh(eccentricity);
+
+  return {
+    radius: MARS_EQUATORIAL_RADIUS * Math.sqrt(poleQ / 2),
+    eccentricity,
+    poleQ,
+  };
+}
+
+function getAuthalicLatitude(
+  latitude: number,
+  eccentricity: number,
+  poleQ: number,
+): number {
+  const sine = Math.sin((latitude * Math.PI) / 180);
+  const eccentricitySine = eccentricity * sine;
+  const q =
+    (1 - eccentricity ** 2) *
+    (sine / (1 - eccentricitySine ** 2) +
+      Math.atanh(eccentricitySine) / eccentricity);
+
+  return Math.asin(Math.max(-1, Math.min(1, q / poleQ)));
+}
+
+export function calculateMarsPolygonArea(
+  coordinates: readonly (readonly number[])[],
+): number {
+  const ring = coordinates.map((coordinate) => {
+    const [longitude, latitude] = coordinate;
+    if (
+      longitude === undefined ||
+      latitude === undefined ||
+      !Number.isFinite(longitude) ||
+      !Number.isFinite(latitude) ||
+      latitude < -90 ||
+      latitude > 90
+    ) {
+      throw new Error("The perimeter contains invalid Mars coordinates.");
+    }
+
+    return [longitude, latitude] as const;
+  });
+
+  if (
+    ring.length > 1 &&
+    ring[0]?.[0] === ring.at(-1)?.[0] &&
+    ring[0]?.[1] === ring.at(-1)?.[1]
+  ) {
+    ring.pop();
+  }
+  if (ring.length < 3) {
+    throw new Error("A perimeter needs at least three boundary points.");
+  }
+
+  const { radius, eccentricity, poleQ } = getMarsAuthalicParameters();
+  const quadratureNodes = [
+    [-0.9602898564975363, 0.1012285362903763],
+    [-0.7966664774136267, 0.2223810344533745],
+    [-0.525532409916329, 0.3137066458778873],
+    [-0.1834346424956498, 0.362683783378362],
+    [0.1834346424956498, 0.362683783378362],
+    [0.525532409916329, 0.3137066458778873],
+    [0.7966664774136267, 0.2223810344533745],
+    [0.9602898564975363, 0.1012285362903763],
+  ] as const;
+  let boundaryIntegral = 0;
+
+  for (let index = 0; index < ring.length; index += 1) {
+    const start = ring[index];
+    const end = ring[(index + 1) % ring.length];
+    if (!start || !end) {
+      throw new Error("Could not read the perimeter boundary.");
+    }
+
+    const longitudeDifference =
+      (((end[0] - start[0] + 540) % 360) - 180) * (Math.PI / 180);
+    if (longitudeDifference === 0) continue;
+
+    const latitudeDifference = end[1] - start[1];
+    const averageSineAuthalicLatitude = quadratureNodes.reduce(
+      (integral, [node, weight]) => {
+        const fraction = (node + 1) / 2;
+        const latitude = start[1] + latitudeDifference * fraction;
+        const authalicLatitude = getAuthalicLatitude(
+          latitude,
+          eccentricity,
+          poleQ,
+        );
+
+        return integral + weight * Math.sin(authalicLatitude) / 2;
+      },
+      0,
+    );
+
+    boundaryIntegral +=
+      longitudeDifference * averageSineAuthalicLatitude;
+  }
+
+  return Math.abs(boundaryIntegral) * radius ** 2;
+}
 
 export function calculateMarsDistance(
   start: readonly [number, number],
@@ -134,13 +246,10 @@ export function configureMarsPointResolution(projection: Projection): void {
     throw new Error("The WMTS projection has no distance conversion.");
   }
 
-  const eccentricitySquared =
-    MARS_FLATTENING * (2 - MARS_FLATTENING);
-
   projection.setGetPointResolution((resolution, coordinate) => {
     const latitude = (coordinate[1] * Math.PI) / 180;
     const denominator =
-      1 - eccentricitySquared * Math.sin(latitude) ** 2;
+      1 - MARS_ECCENTRICITY_SQUARED * Math.sin(latitude) ** 2;
     const primeVerticalRadius =
       MARS_EQUATORIAL_RADIUS / Math.sqrt(denominator);
     const marsMetersPerDegree =

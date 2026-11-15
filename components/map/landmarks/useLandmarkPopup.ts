@@ -19,6 +19,8 @@ export function useLandmarkPopup(
   map: Map | null,
   landmarkLayer: VectorLayer<VectorSource> | null,
   popupElement: RefObject<HTMLDivElement | null>,
+  customLandmarks: MarsLandmark[] = [],
+  isAddingLandmark = false,
 ) {
   const overlay = useRef<Overlay | null>(null);
   const hoverKey = useRef<EventsKey | undefined>(undefined);
@@ -100,7 +102,8 @@ export function useLandmarkPopup(
       const landmark =
         featureId === undefined
           ? undefined
-          : LANDMARK_CATALOG.find(({ id }) => id === String(featureId));
+          : (LANDMARK_CATALOG.find(({ id }) => id === String(featureId)) ??
+            customLandmarks.find(({ id }) => id === String(featureId)));
       const geometry = feature?.getGeometry();
       const coordinate =
         geometry instanceof Point ? geometry.getCoordinates() : undefined;
@@ -112,7 +115,9 @@ export function useLandmarkPopup(
           selectedLandmarkRef.current = landmark;
           setSelectedLandmark(landmark);
         }
-        if (mapTarget) mapTarget.style.cursor = "pointer";
+        if (mapTarget && !isAddingLandmark) {
+          mapTarget.style.cursor = "pointer";
+        }
         return;
       }
 
@@ -122,7 +127,9 @@ export function useLandmarkPopup(
         return;
       }
 
-      if (mapTarget) mapTarget.style.cursor = "";
+      if (mapTarget && !isAddingLandmark) {
+        mapTarget.style.cursor = "";
+      }
       scheduleHide();
     }
 
@@ -149,12 +156,14 @@ export function useLandmarkPopup(
       }
       popup.removeEventListener("pointerenter", onPopupPointerEnter);
       popup.removeEventListener("pointerleave", onPopupPointerLeave);
-      if (mapTarget) mapTarget.style.cursor = "";
+      if (mapTarget && !isAddingLandmark) {
+        mapTarget.style.cursor = "";
+      }
       activeMap.removeOverlay(landmarkOverlay);
       overlay.current = null;
       hoverKey.current = undefined;
     };
-  }, [landmarkLayer, map, popupElement]);
+  }, [customLandmarks, isAddingLandmark, landmarkLayer, map, popupElement]);
 
   return { closePopup, selectedLandmark };
 }
