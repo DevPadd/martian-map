@@ -39,7 +39,6 @@ export default function MarsMap() {
         selectedLayerIndex={selectedLayerIndex}
       />
       <GuideBookFAB />
-      <MapStatus status={status} />
       <div className="absolute bottom-20 right-12 z-50">
         <MapZoomControl map={map} />
       </div>
