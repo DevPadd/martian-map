@@ -23,15 +23,7 @@ const BRIEFING_SECTIONS = [
       "Document rock context and surface relationships; any life-related interpretation requires independent evidence and laboratory-quality analysis.",
     ],
   },
-  {
-    title: "Safety procedure (conceptual)",
-    icon: ShieldAlert,
-    items: [
-      "Treat the perimeter and map layers as an educational visualization, not a certified route, landing boundary, or real-time hazard product.",
-      "A real mission would use approved procedures, crew/system health monitoring, communications plans, and mission-control review before changing activities.",
-      "Preserve sample context and prevent cross-contamination under mission-approved planetary-protection protocols.",
-    ],
-  },
+
   {
     title: "Potential obstructions and hazards",
     icon: LocateFixed,
