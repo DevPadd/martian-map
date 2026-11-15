@@ -33,7 +33,7 @@ export default function MarsMap() {
   const [activeDrawingTool, setActiveDrawingTool] = useState<
     "distance" | "perimeter" | "landmark" | null
   >(null);
-  const [missionTimelineVisible, setMissionTimelineVisible] = useState(true);
+  const [missionTimelineVisible, setMissionTimelineVisible] = useState(false);
   const [customLandmarks, setCustomLandmarks] = useState<MarsLandmark[]>([]);
   const [storageError, setStorageError] = useState<string | null>(null);
   const [sidebarLandmark, setSidebarLandmark] = useState<MarsLandmark | null>(

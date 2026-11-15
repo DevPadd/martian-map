@@ -269,7 +269,7 @@ export default function MapDistanceControl({
     <div className="mars-distance-control">
       <button
         type="button"
-        className="mars-distance-button cursor-pointer z-90 flex  items-center gap-1 border border-orange-400/60 bg-black/90 p-[0.3rem] text-sm font-semibold text-orange-400 shadow-lg shadow-black/40 transition hover:bg-orange-950  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
+        className="mars-map-tool-button mars-distance-button cursor-pointer border border-orange-400/60 bg-black/90 text-orange-400 shadow-lg shadow-black/40 transition hover:bg-orange-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
         disabled={!map || (drawingDisabled && !isDrawing)}
         onClick={isDrawing ? cancelMeasurement : startMeasurement}
         aria-label={
@@ -277,7 +277,11 @@ export default function MapDistanceControl({
         }
         aria-pressed={isDrawing}
       >
-        {isDrawing ? <X /> : <MapPinPen className="text-orange-400" />}
+        {isDrawing ? (
+          <X className="h-5 w-5" aria-hidden="true" />
+        ) : (
+          <MapPinPen className="h-5 w-5 text-orange-400" aria-hidden="true" />
+        )}
       </button>
       <div
         ref={popupElement}

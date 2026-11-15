@@ -122,7 +122,10 @@ export default function ResearchPerimeterControl({
       try {
         calculatedArea = calculateMarsPolygonArea(coordinates);
       } catch (error) {
-        console.error("Mars research perimeter area calculation failed:", error);
+        console.error(
+          "Mars research perimeter area calculation failed:",
+          error,
+        );
         perimeterSource.removeFeature(feature);
         setDrawingError(
           error instanceof Error
@@ -209,7 +212,7 @@ export default function ResearchPerimeterControl({
     <div className="relative z-50 flex justify-end">
       <button
         type="button"
-        className="flex min-h-10 cursor-pointer items-center gap-1 border border-emerald-400/60 bg-black/90 p-2 text-sm font-semibold text-emerald-300 shadow-lg shadow-black/40 transition hover:bg-emerald-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mars-map-tool-button cursor-pointer border border-emerald-400/60 bg-black/90 text-emerald-300 shadow-lg shadow-black/40 transition hover:bg-emerald-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
         disabled={!map || (drawingDisabled && !isDrawing)}
         onClick={toggleDrawing}
         aria-label={
@@ -222,7 +225,11 @@ export default function ResearchPerimeterControl({
             : "Draw a freehand research perimeter"
         }
       >
-        {isDrawing ? <X aria-hidden /> : <Pentagon aria-hidden />}
+        {isDrawing ? (
+          <X className="h-5 w-5" aria-hidden="true" />
+        ) : (
+          <Pentagon className="h-5 w-5" aria-hidden="true" />
+        )}
         <span className="sr-only">
           {isDrawing ? "Cancel perimeter drawing" : "Draw perimeter"}
         </span>
@@ -248,14 +255,11 @@ export default function ResearchPerimeterControl({
             <p className="mt-1 leading-relaxed text-emerald-100/75">
               {isDrawing
                 ? "Click and drag on the map to sketch the boundary. Release to finish; press Esc to cancel."
-                : (drawingError ?? "The dashed outline is visible on the map.")}
+                : (drawingError ?? "")}
             </p>
             {hasPerimeter && areaSquareMeters !== null && (
               <p className="mt-2 border-t border-emerald-400/25 pt-2 font-mono text-sm font-semibold text-emerald-200">
                 Approx. area: {formatArea(areaSquareMeters)}
-                <span className="mt-1 block font-sans text-[0.65rem] font-normal text-emerald-100/60">
-                  Estimated using Mars&apos;s ellipsoid model.
-                </span>
               </p>
             )}
             {hasPerimeter && !isDrawing && (

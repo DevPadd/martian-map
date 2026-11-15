@@ -148,7 +148,7 @@ export default function AddLandmarkControl({
     <div className="relative z-50 flex justify-end">
       <button
         type="button"
-        className="flex min-h-10 cursor-pointer items-center gap-1 border border-sky-400/60 bg-black/90 p-2 text-sm font-semibold text-sky-300 shadow-lg shadow-black/40 transition hover:bg-sky-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mars-map-tool-button cursor-pointer border border-sky-400/60 bg-black/90 text-sky-300 shadow-lg shadow-black/40 transition hover:bg-sky-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 disabled:cursor-not-allowed disabled:opacity-50"
         disabled={!map || (drawingDisabled && !isAdding)}
         onClick={isAdding ? cancel : startAdding}
         aria-label={isAdding ? "Cancel adding a map point" : "Add a map point"}
@@ -159,12 +159,16 @@ export default function AddLandmarkControl({
             : "Add a point to the map"
         }
       >
-        {isAdding ? <X aria-hidden /> : <MapPinPlusInside aria-hidden />}
+        {isAdding ? (
+          <X className="h-5 w-5" aria-hidden="true" />
+        ) : (
+          <MapPinPlusInside className="h-5 w-5" aria-hidden="true" />
+        )}
       </button>
       <AnimatePresence>
         {panelVisible && (
           <motion.section
-            className="absolute bottom-full right-0 mb-2 w-[min(20rem,calc(100vw-1rem))] border border-sky-400/60 bg-black/95 p-3 text-xs text-sky-100 shadow-xl shadow-black/50"
+            className="mars-add-landmark-panel absolute right-0 mb-2 w-[min(20rem,calc(100vw-1rem))] border border-sky-400/60 bg-black/95 p-3 text-xs text-sky-100 shadow-xl shadow-black/50"
             aria-label="Add and manage map points"
             initial={{ opacity: 0, y: 8, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

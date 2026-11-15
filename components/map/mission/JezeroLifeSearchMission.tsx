@@ -96,14 +96,11 @@ export default function JezeroLifeSearchMission({
             >
               <header className="flex items-start justify-between gap-3 border-b border-orange-500/30 pb-3">
                 <div>
-                  <p className="text-[0.6rem] font-semibold uppercase tracking-[0.18em] text-orange-500">
-                    B.C.I. · Concept mission
-                  </p>
                   <h2
                     id="jezero-mission-briefing-title"
                     className="mt-1 text-sm font-bold text-orange-200 sm:text-base"
                   >
-                    Jezero Life-Search Expedition
+                    ADAM Expedition: Jezero life-search mission briefing
                   </h2>
                 </div>
                 <button
@@ -115,12 +112,6 @@ export default function JezeroLifeSearchMission({
                   ×
                 </button>
               </header>
-
-              <p className="mt-3 leading-relaxed text-orange-100/75">
-                A fictional planning concept inspired by Perseverance&apos;s
-                exploration of Jezero. The study boundary is approximate and is
-                not an operational mission plan.
-              </p>
 
               <label className="mt-3 flex cursor-pointer items-start gap-2 border border-emerald-400/40 bg-emerald-950/20 p-2 text-emerald-100">
                 <input

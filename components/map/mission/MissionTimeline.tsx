@@ -48,11 +48,9 @@ export default function MissionTimeline({
           id="jezero-mission-timeline-title"
           className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-orange-400 sm:text-xs"
         >
-          Jezero life-search mission timeline
+          Adam Expedition: Mars mission timeline
         </h2>
-        <span className="shrink-0 text-[0.6rem] text-orange-200/60 sm:text-[0.65rem]">
-          Estimated mission sols
-        </span>
+
         <button
           type="button"
           aria-controls="jezero-mission-timeline"

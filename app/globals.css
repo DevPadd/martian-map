@@ -61,16 +61,16 @@ body {
   z-index: 50;
 }
 
-.mars-distance-button {
-  min-height: 2.5rem;
-  border: 1px solid rgb(251 146 60 / 60%);
+.mars-map-tool-button {
+  box-sizing: border-box;
+  display: flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 2.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   border-radius: 0.25rem;
-  background: rgb(0 0 0 / 90%);
-  color: rgb(254 215 170);
-  font-size: 0.75rem;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 40%);
-  transition: background-color 150ms ease;
 }
 
 .mars-distance-button:hover:not(:disabled) {
@@ -84,6 +84,12 @@ body {
 .mars-distance-button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.mars-add-landmark-panel {
+  bottom: calc(100% + 12rem);
+  max-height: min(60dvh, calc(100dvh - 16rem));
+  overflow-y: auto;
 }
 
 .mars-distance-popup {
