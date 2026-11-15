@@ -67,7 +67,7 @@ export default function GuideBookFAB() {
       <button
         ref={triggerRef}
         type="button"
-        className="fixed bottom-5 right-5 z-[90] flex h-14 items-center gap-2 rounded-full border border-red-400/60 bg-black/90 px-4 text-sm font-semibold text-red-200 shadow-lg shadow-black/40 transition hover:bg-red-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
+        className="fixed bottom-5 right-5 z-90 flex h-14 items-center gap-2 rounded-full border border-red-400/60 bg-black/90 px-4 text-sm font-semibold text-red-200 shadow-lg shadow-black/40 transition hover:bg-red-950  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
         onClick={() => setIsOpen(true)}
         aria-label="Open mission field guide"
         aria-haspopup="dialog"
@@ -88,7 +88,7 @@ export default function GuideBookFAB() {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) closeGuide();
           }}
@@ -118,7 +118,7 @@ export default function GuideBookFAB() {
                 ref={closeRef}
                 type="button"
                 onClick={closeGuide}
-                className="shrink-0 border border-red-500/40 px-3 py-1 text-xl text-red-300 transition hover:bg-red-500/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400"
+                className="shrink-0 border border-red-500/40 px-3 py-1 text-xl text-red-300 transition hover:bg-red-500/15 focus-visible:outline-2 focus-visible:outline-red-400"
                 aria-label="Close mission field guide"
               >
                 ×
