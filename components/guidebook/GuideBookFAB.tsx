@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Galaxy, Info } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -148,6 +149,17 @@ export default function GuideBookFAB() {
                         <li key={step}>{step}</li>
                       ))}
                     </ul>
+                  )}
+                  {section.image && (
+                    <figure className="flex justify-center pt-2">
+                      <Image
+                        src={section.image.src}
+                        alt={section.image.alt}
+                        width={section.image.width}
+                        height={section.image.height}
+                        className="h-auto max-h-96 max-w-full border border-orange-500/30 object-contain"
+                      />
+                    </figure>
                   )}
                 </section>
               ))}

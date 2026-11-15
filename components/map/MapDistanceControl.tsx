@@ -333,7 +333,7 @@ export default function MapDistanceControl({
                       </span>
                     </label>
                     <label className="mars-distance-input-group">
-                      <span>Number of Crew Members</span>
+                      <span>Food allocation (kg/person/sol)</span>
                       <span className="mars-distance-input-row">
                         <input
                           type="number"
