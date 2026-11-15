@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { LocateFixed, MapPinned, ShieldAlert } from "lucide-react";
 import type OLMap from "ol/Map.js";
+import Image from "next/image";
 
 import { JEZERO_STUDY_AREA_CENTER } from "./jezeroStudyArea";
 
@@ -95,6 +96,12 @@ export default function JezeroLifeSearchMission({
               transition={{ duration: 0.2, ease: "easeOut" }}
             >
               <header className="flex items-start justify-between gap-3 border-b border-orange-500/30 pb-3">
+                <Image
+                  src="/landmarks/mission-logo.jpeg"
+                  alt="Jezero Mission"
+                  width={64}
+                  height={64}
+                />
                 <div>
                   <h2
                     id="jezero-mission-briefing-title"
