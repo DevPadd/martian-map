@@ -5,6 +5,7 @@ import { useRef } from "react";
 import MapStatus from "./map/MapStatus";
 import MapToolbar from "./map/MapToolbar";
 import { useMarsMap } from "./map/useMarsMap";
+import GuideBookFAB from "./guidebook/GuideBookFAB";
 
 export default function MarsMap() {
   const mapElement = useRef<HTMLDivElement>(null);
@@ -19,6 +20,7 @@ export default function MarsMap() {
         onLayerChange={onLayerChange}
         selectedLayerIndex={selectedLayerIndex}
       />
+      <GuideBookFAB />
       <MapStatus status={status} />
     </div>
   );
