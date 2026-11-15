@@ -38,11 +38,7 @@ body {
 }
 
 .mars-scale-line {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 1px solid rgb(239 68 68 / 40%);
+  position: static;
   border-radius: 4px;
   background: rgb(0 0 0 / 80%);
   padding: 6px 10px 12px;
@@ -68,8 +64,13 @@ body {
   background-color: rgb(239 68 68);
 }
 
-.mars-scale-line .ol-scale-step-text {
+.mars-scale-line .ol-scale-step-text,
+.mars-scale-line .ol-scale-text {
   color: rgb(239 68 68);
+  background-color: transparent;
+  border-radius: 2px;
+  padding: 1px 3px;
+  text-shadow: none;
 }
 
 .mars-landmark-popup {

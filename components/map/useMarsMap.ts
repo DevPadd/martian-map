@@ -6,7 +6,6 @@ import type { RefObject } from "react";
 import Map from "ol/Map.js";
 import View from "ol/View.js";
 import TileLayer from "ol/layer/Tile.js";
-import ScaleLine from "ol/control/ScaleLine.js";
 import { defaults as defaultControls } from "ol/control/defaults.js";
 import WMTS, { optionsFromCapabilities } from "ol/source/WMTS.js";
 import WMTSCapabilities from "ol/format/WMTSCapabilities.js";
@@ -227,17 +226,6 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
           view,
           controls: defaultControls({ zoom: false }),
         });
-        map.addControl(
-          new ScaleLine({
-            className: "mars-scale-line",
-            units: "metric",
-            bar: true,
-            steps: 4,
-            minWidth: 160,
-            maxWidth: 220,
-          }),
-        );
-
         pointerMoveKey.current = map.on("pointermove", ({ coordinate }) => {
           setCursorCoordinates({
             latitude: coordinate[1],

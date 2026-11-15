@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 
 import MapToolbar from "./map/MapToolbar";
+import MapScaleControl from "./map/MapScaleControl";
 import MapZoomControl from "./map/MapZoomControl";
 import { useMarsMap } from "./map/useMarsMap";
 import GuideBookFAB from "./guidebook/GuideBookFAB";
@@ -41,6 +42,9 @@ export default function MarsMap() {
       <GuideBookFAB />
       <div className="absolute bottom-20 right-12 z-50">
         <MapZoomControl map={map} />
+      </div>
+      <div className="fixed bottom-4 left-1/2 z-40 -translate-x-1/2">
+        <MapScaleControl map={map} />
       </div>
       <LandmarkPopup
         elementRef={popupElement}

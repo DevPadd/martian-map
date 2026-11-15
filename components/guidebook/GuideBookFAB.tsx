@@ -67,7 +67,7 @@ export default function GuideBookFAB() {
       <button
         ref={triggerRef}
         type="button"
-        className="fixed bottom-20 right-2 z-90 flex  items-center gap-1 border border-red-400/60 bg-black/90 p-[0.3rem] text-sm font-semibold text-red-500 shadow-lg shadow-black/40 transition hover:bg-red-950  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
+        className="fixed cursor-pointer bottom-20 right-2 z-90 flex  items-center gap-1 border border-red-400/60 bg-black/90 p-[0.3rem] text-sm font-semibold text-red-500 shadow-lg shadow-black/40 transition hover:bg-red-950  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
         onClick={() => setIsOpen(true)}
         aria-label="Open mission field guide"
         aria-haspopup="dialog"

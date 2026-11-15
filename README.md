@@ -36,10 +36,10 @@ Demo: https://martian-map-eight.vercel.app/
 ## Essential features
 
 - [x] interactive map, panning, coords, and zooming feature
-- [ ] premade landmark and checkpoints
-- [ ] survival guidebook
+- [x] premade landmark and checkpoints
+- [x] survival guidebook
 - [x] multiple layers (CTX, Topography, etc)
-- [ ] clickable landmarks, which opens a popup and displays informations
+- [x] clickable landmarks, which opens a popup and displays informations
 - [ ] Rover traverse path?
 - [ ] Distance calculator
 

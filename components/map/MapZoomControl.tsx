@@ -24,5 +24,5 @@ export default function MapZoomControl({ map }: MapZoomControlProps) {
     };
   }, [map]);
 
-  return <div ref={targetElement} className="mars-zoom-control" />;
+  return <div ref={targetElement} className="mars-zoom-control " />;
 }

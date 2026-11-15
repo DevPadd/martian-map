@@ -17,6 +17,12 @@ export const MAP_LAYERS = [
     capabilitiesUrl:
       "https://trek.nasa.gov/tiles/Mars/EQ/Mars_MOLA_blend200ppx_HRSC_ClrShade_clon0dd_200mpp_lzw/1.0.0/WMTSCapabilities.xml",
   },
+  {
+    id: "JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd",
+    name: "Jezero Crater HiRISE Ortho Mosaic",
+    capabilitiesUrl:
+      "https://trek.nasa.gov/tiles/Mars/EQ/JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd/1.0.0/WMTSCapabilities.xml",
+  },
 ] as const satisfies readonly MapLayerConfig[];
 
 export const JEZERO_CENTER: [number, number] = [77.3835, 18.4836];
