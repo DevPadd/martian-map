@@ -1,4 +1,4 @@
-![alt text](.github/assets/design-1.png)
+![alt text](.github/assets/screenshot-1.png)
 
 ## what the hell is this?
 
@@ -9,6 +9,9 @@ The application combines scientific data from multiple NASA missions into one in
 Instead of simply displaying a map, it tells astronauts what is around them, what makes each location scientifically interesting, and what they should know before exploring it.
 
 Demo: https://martian-map-eight.vercel.app/
+
+![alt text](.github/assets/design-1.png)
+btw this is the initial design
 
 ## Features
 
