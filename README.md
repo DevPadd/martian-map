@@ -1,5 +1,3 @@
-![alt text](.github/assets/screenshot-1.png)
-
 ## what the hell is this?
 
 A web-based interactive Mars exploration map that is designed to help future astronauts understand and navigate the Martian surface after landing. Think of it as Google Maps for Mars.
@@ -10,8 +8,19 @@ Instead of simply displaying a map, it tells astronauts what is around them, wha
 
 Demo: https://martian-map-eight.vercel.app/
 
-![alt text](.github/assets/design-1.png)
-btw this is the initial design
+## Screenshots
+
+### Final Product
+
+![Welcome screen](.github/assets/welcome-screen.png) ![Main screenshot](.github/assets/screenshot-1.png)  
+![Map screen](.github/assets/screen-2.png) ![Perimeter view](.github/assets/perimeter-1.png)  
+![Roughness layer](.github/assets/roughness-1.png) ![Distance calculator](.github/assets/distance-1.png)
+![Survival module](.github/assets/survival-module.png)
+
+### Initial design
+
+![Initial design](.github/assets/design-1.png)
+![Design concept](.github/assets/design-2.png)
 
 ## Features
 
