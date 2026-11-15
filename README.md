@@ -1,12 +1,8 @@
-## what the hell is this?
+## Project Overview
 
-A web-based interactive Mars exploration map that is designed to help future astronauts understand and navigate the Martian surface after landing. Think of it as Google Maps for Mars.
+B.C.I. (Beyond-terrestrial Cartography Interface) is an interactive Mars exploration map that combines a global view of the planet with detailed exploration tools focused mainly on Jezero Crater. Using NASA map data, users can switch between topographic, regional imagery, and environmental layers; explore scientific landmarks; and add custom markers. They can also draw routes to estimate distance, travel time, and food rations per person, or outline areas to estimate their size. An ADAM mission briefing and timeline frame the experience around searching for possible signs of life near Jezero, while a survival guidebook adds practical context.
 
-The application combines scientific data from multiple NASA missions into one interactive map, allowing users to explore Mars, discover geographical landmarks, access scientific information, and identify potential exploration destinations.
-
-Instead of simply displaying a map, it tells astronauts what is around them, what makes each location scientifically interesting, and what they should know before exploring it.
-
-Demo: https://martian-map-eight.vercel.app/
+B.C.I. addresses the challenge of making Mars data easier to explore and more engaging than a conventional map. Its vivid, Neon Genesis Evangelion-inspired mission-control interface pairs an intuitive, mobile-friendly experience with scientific context. The project considers both the availability of Mars data and the need to make planetary exploration accessible and compelling. It supports learning and early exploration planning, not mission-ready decisions.
 
 ## Screenshots
 
@@ -52,9 +48,7 @@ The inputs must be positive numbers. Results are rounded to two decimal places f
 - Openlayers WMTS
 - Proj4js
 - lucide-react
-- Turf.js
 - GeoJSON
-- Zod
 
 ## NASA data usage
 
@@ -64,6 +58,11 @@ The inputs must be positive numbers. Results are rounded to two decimal places f
   - MRO CTX, Jezero Mosaic, Controlled
   - MRO CTX, Jezero Mosaic, Preliminary
 - Perseverance's traverse path at Jezero Crater: https://science.nasa.gov/mission/mars-2020-perseverance/location-map/
+- Curiosity traverse path at Gale crater
+
+## AI/SI disclosure
+
+GitHub Copilot and GPT Luna 6 were used as AI/SI tools during development to assist with coding and refining ideas. Their suggestions were used as aids in the development process, alongside the project team's own decisions and implementation. NASA data sources are listed above.
 
 ## TO DO
 
@@ -77,16 +76,16 @@ The inputs must be positive numbers. Results are rounded to two decimal places f
 - [x] Rover traverse path?
 - [x] Distance calculator
 - [x] Add estimated travel time and food consumption for distance calculator
-- [ ] add more map layers
+- [x] add more map layers
 
 ## Would be nice to have (IF I HAD THE TIME ASAFOSAJFO)
 
 - [ ] add sound effect and sound
 - [ ] use custom cursor
-- [ ] add evangelion-like screen overlay
+- [x] add evangelion-like screen overlay
 - [ ] AI chatbot (magi lol)
 - [ ] All landmarks on global mars
-- [ ] Add feature that allows user to add their own checkpoint/landmark
+- [x] Add feature that allows user to add their own checkpoint/landmark
 
 ## Running Locally
 
