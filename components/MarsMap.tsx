@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import MapToolbar from "./map/MapToolbar";
 import MapZoomControl from "./map/MapZoomControl";
 import { useMarsMap } from "./map/useMarsMap";
+import GuideBookFAB from "./guidebook/GuideBookFAB";
 import LandmarkPopup from "./map/landmarks/LandmarkPopup";
 import LandmarkSidebar from "./map/landmarks/LandmarkSidebar";
 import type { MarsLandmark } from "./map/landmarks/landmarkTypes";
@@ -37,6 +38,8 @@ export default function MarsMap() {
         onLayerChange={onLayerChange}
         selectedLayerIndex={selectedLayerIndex}
       />
+      <GuideBookFAB />
+      <MapStatus status={status} />
       <div className="absolute bottom-20 right-12 z-50">
         <MapZoomControl map={map} />
       </div>
