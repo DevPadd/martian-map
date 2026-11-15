@@ -52,6 +52,17 @@ export type HazardCard = {
   articleId: string;
 };
 
+export type LearningScenario = {
+  id: string;
+  title: string;
+  situation: string;
+  question: string;
+  choices: string[];
+  correctChoice: number;
+  explanation: string;
+  articleId: string;
+};
+
 export const SURVIVAL_MODULE_TITLE = "SURVIVAL MODULE";
 
 export const SURVIVAL_MODULE_INTRO =
@@ -59,12 +70,28 @@ export const SURVIVAL_MODULE_INTRO =
 
 export const GUIDE_CATEGORIES: GuideCategory[] = [
   { id: "mars", title: "Understanding Mars", shortTitle: "Mars" },
-  { id: "spacesuit", title: "Spacesuit and Life Support", shortTitle: "Suit & life support" },
-  { id: "terrain", title: "Surface and Terrain Hazards", shortTitle: "Terrain" },
-  { id: "environment", title: "Environmental Hazards", shortTitle: "Environment" },
+  {
+    id: "spacesuit",
+    title: "Spacesuit and Life Support",
+    shortTitle: "Suit & life support",
+  },
+  {
+    id: "terrain",
+    title: "Surface and Terrain Hazards",
+    shortTitle: "Terrain",
+  },
+  {
+    id: "environment",
+    title: "Environmental Hazards",
+    shortTitle: "Environment",
+  },
   { id: "eva", title: "EVA Safety Concepts", shortTitle: "EVA" },
   { id: "habitat", title: "Habitat and Base Safety", shortTitle: "Habitat" },
-  { id: "communication", title: "Communication and Emergency Awareness", shortTitle: "Communication" },
+  {
+    id: "communication",
+    title: "Communication and Emergency Awareness",
+    shortTitle: "Communication",
+  },
   { id: "health", title: "Human Health and Wellbeing", shortTitle: "Health" },
   { id: "missions", title: "Past Mars Missions", shortTitle: "Past missions" },
 ];
@@ -90,7 +117,8 @@ const HUMAN_RESEARCH_PROGRAM: GuideReference = {
   url: "https://www.nasa.gov/hrp/",
 };
 const PERCHLORATE_RESEARCH: GuideReference = {
-  title: "Detection of Perchlorate and the Soluble Chemistry of Martian Soil at the Phoenix Lander Site",
+  title:
+    "Detection of Perchlorate and the Soluble Chemistry of Martian Soil at the Phoenix Lander Site",
   publisher: "Science",
   url: "https://doi.org/10.1126/science.1172466",
 };
@@ -159,8 +187,16 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
       "Do not infer a safe route, landing location, or human exposure limit from a single image or global dataset.",
     ],
     relatedLayers: [
-      { label: "Global MOLA/HRSC hillshade", mapLayerId: "Mars_MOLA_blend200ppx_HRSC_Shade_clon0dd_200mpp_lzw", availability: "available" },
-      { label: "Global color hillshade", mapLayerId: "Mars_MOLA_blend200ppx_HRSC_ClrShade_clon0dd_200mpp_lzw", availability: "available" },
+      {
+        label: "Global MOLA/HRSC hillshade",
+        mapLayerId: "Mars_MOLA_blend200ppx_HRSC_Shade_clon0dd_200mpp_lzw",
+        availability: "available",
+      },
+      {
+        label: "Global color hillshade",
+        mapLayerId: "Mars_MOLA_blend200ppx_HRSC_ClrShade_clon0dd_200mpp_lzw",
+        availability: "available",
+      },
     ],
     relatedLandmarks: ["olympus-mons", "valles-marineris", "hellas-basin"],
     references: [MARS_FACTS, HUMANS_TO_MARS],
@@ -171,7 +207,16 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     title: "Spacesuit and Life Support",
     introduction:
       "A spacesuit is a personal spacecraft: it provides a pressurized environment and integrates systems for breathing, thermal management, communications, mobility, and power.",
-    keywords: ["pressure", "oxygen", "cooling", "water", "battery", "communications", "dust", "suit"],
+    keywords: [
+      "pressure",
+      "oxygen",
+      "cooling",
+      "water",
+      "battery",
+      "communications",
+      "dust",
+      "suit",
+    ],
     overview:
       "Human-rated Mars surface suits and their life-support systems require dedicated engineering, testing, and certification. This article describes general subsystem roles, not a particular flight suit or operating procedure.",
     whyItMatters:
@@ -205,7 +250,16 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     title: "Surface and Terrain Hazards",
     introduction:
       "A terrain map can reveal broad landforms, but surface hazards may exist below the data's resolution or be hidden by shadow, dust, or viewing geometry.",
-    keywords: ["slope", "sand", "regolith", "rocks", "craters", "cliffs", "roughness", "terrain"],
+    keywords: [
+      "slope",
+      "sand",
+      "regolith",
+      "rocks",
+      "craters",
+      "cliffs",
+      "roughness",
+      "terrain",
+    ],
     overview:
       "Martian terrain includes steep crater rims, cliffs, dunes, loose regolith, rock fields, channels, and boundaries between geological units. Their appearance depends on image scale, illumination, and data processing.",
     whyItMatters:
@@ -231,9 +285,22 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
       "A human mission would require validated terrain products, operational constraints, crew training, and mission-specific review.",
     ],
     relatedLayers: [
-      { label: "Global MOLA/HRSC hillshade", mapLayerId: "Mars_MOLA_blend200ppx_HRSC_Shade_clon0dd_200mpp_lzw", availability: "available" },
-      { label: "Jezero HiRISE ortho mosaic", mapLayerId: "JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd", availability: "available" },
-      { label: "Gale CTX mosaic", mapLayerId: "Gale_CTX_BlockAdj_dd", availability: "available" },
+      {
+        label: "Global MOLA/HRSC hillshade",
+        mapLayerId: "Mars_MOLA_blend200ppx_HRSC_Shade_clon0dd_200mpp_lzw",
+        availability: "available",
+      },
+      {
+        label: "Jezero HiRISE ortho mosaic",
+        mapLayerId:
+          "JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd",
+        availability: "available",
+      },
+      {
+        label: "Gale CTX mosaic",
+        mapLayerId: "Gale_CTX_BlockAdj_dd",
+        availability: "available",
+      },
       { label: "Slope and roughness rasters", availability: "planned" },
     ],
     relatedLandmarks: ["jezero-crater", "gale-crater", "valles-marineris"],
@@ -245,7 +312,15 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     title: "Environmental Hazards",
     introduction:
       "Mars's thin atmosphere, temperature extremes, radiation environment, dust, and soil chemistry create challenges for both people and equipment.",
-    keywords: ["radiation", "dust storm", "temperature", "perchlorate", "atmosphere", "solar", "cosmic"],
+    keywords: [
+      "radiation",
+      "dust storm",
+      "temperature",
+      "perchlorate",
+      "atmosphere",
+      "solar",
+      "cosmic",
+    ],
     overview:
       "Environmental hazards arise from conditions such as low atmospheric pressure, cold, radiation, wind-driven dust, and reactive or toxic compounds. The actual exposure depends on location, time, shielding, and mission design.",
     whyItMatters:
@@ -271,9 +346,17 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
       "Distinguish measured observations from interpretations and from hypothetical future mission implications.",
     ],
     relatedLayers: [
-      { label: "Global MOLA/HRSC hillshade", mapLayerId: "Mars_MOLA_blend200ppx_HRSC_Shade_clon0dd_200mpp_lzw", availability: "available" },
+      {
+        label: "Global MOLA/HRSC hillshade",
+        mapLayerId: "Mars_MOLA_blend200ppx_HRSC_Shade_clon0dd_200mpp_lzw",
+        availability: "available",
+      },
     ],
-    relatedLandmarks: ["hellas-basin", "korolev-crater", "perseverance-landing-site"],
+    relatedLandmarks: [
+      "hellas-basin",
+      "korolev-crater",
+      "perseverance-landing-site",
+    ],
     references: [
       MARS_FACTS,
       HUMANS_TO_MARS,
@@ -288,7 +371,15 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     title: "EVA Safety Concepts",
     introduction:
       "An extravehicular activity (EVA) is a complex team operation that depends on a clear objective, shared situational awareness, and a mission-approved plan.",
-    keywords: ["EVA", "extravehicular", "navigation", "buddy", "mission control", "return", "inspection"],
+    keywords: [
+      "EVA",
+      "extravehicular",
+      "navigation",
+      "buddy",
+      "mission control",
+      "return",
+      "inspection",
+    ],
     overview:
       "EVA planning spans the crew, suit and vehicle systems, communications, navigation, science goals, terrain, and support teams. Mars communication delays mean some decisions cannot rely on immediate Earth response.",
     whyItMatters:
@@ -311,8 +402,17 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
       "All EVA decisions belong to trained crews and mission control operating under approved procedures.",
     ],
     relatedLayers: [
-      { label: "Jezero HiRISE ortho mosaic", mapLayerId: "JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd", availability: "available" },
-      { label: "Global color hillshade", mapLayerId: "Mars_MOLA_blend200ppx_HRSC_ClrShade_clon0dd_200mpp_lzw", availability: "available" },
+      {
+        label: "Jezero HiRISE ortho mosaic",
+        mapLayerId:
+          "JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd",
+        availability: "available",
+      },
+      {
+        label: "Global color hillshade",
+        mapLayerId: "Mars_MOLA_blend200ppx_HRSC_ClrShade_clon0dd_200mpp_lzw",
+        availability: "available",
+      },
     ],
     relatedLandmarks: ["perseverance-landing-site", "curiosity-landing-site"],
     references: [HUMANS_TO_MARS, PERSEVERANCE, CURIOSITY],
@@ -323,7 +423,17 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     title: "Habitat and Base Safety",
     introduction:
       "A future Mars habitat would need to maintain a controlled environment and manage air, water, food, power, waste, and equipment over long periods far from Earth.",
-    keywords: ["habitat", "air", "pressure", "water", "food", "power", "fire", "waste", "hygiene"],
+    keywords: [
+      "habitat",
+      "air",
+      "pressure",
+      "water",
+      "food",
+      "power",
+      "fire",
+      "waste",
+      "hygiene",
+    ],
     overview:
       "Habitat safety is a systems-engineering challenge. Life-support, power, thermal control, structure, environmental monitoring, and crew operations interact and require redundancy and verified procedures.",
     whyItMatters:
@@ -354,7 +464,15 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     title: "Communication and Emergency Awareness",
     introduction:
       "Communication between Mars and Earth is delayed by the distance between the planets, so a crewed mission would need robust communication systems and carefully defined autonomy.",
-    keywords: ["communication", "delay", "emergency", "location", "mission control", "autonomy", "abort"],
+    keywords: [
+      "communication",
+      "delay",
+      "emergency",
+      "location",
+      "mission control",
+      "autonomy",
+      "abort",
+    ],
     overview:
       "Mars mission communications may use direct-to-Earth links and relay spacecraft. Availability and delay vary with geometry, network coverage, and system status.",
     whyItMatters:
@@ -384,7 +502,16 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     title: "Human Health and Wellbeing",
     introduction:
       "A long-duration Mars mission would expose crew to partial gravity, isolation, radiation, constrained resources, and distance from Earth-based medical support.",
-    keywords: ["health", "gravity", "dehydration", "fatigue", "sleep", "isolation", "psychological", "medical"],
+    keywords: [
+      "health",
+      "gravity",
+      "dehydration",
+      "fatigue",
+      "sleep",
+      "isolation",
+      "psychological",
+      "medical",
+    ],
     overview:
       "Human health in space is an active research area. Evidence from orbital missions and analog environments can inform planning, but does not fully represent the duration, gravity, or surface conditions of a Mars mission.",
     whyItMatters:
@@ -415,7 +542,18 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     title: "Past Mars Missions",
     introduction:
       "Robotic missions have built a growing record of Mars's geology, atmosphere, climate, and engineering challenges. Their achievements are informative, but robotic capability is not proof of human-system readiness.",
-    keywords: ["Viking", "Pathfinder", "Sojourner", "Spirit", "Opportunity", "Curiosity", "InSight", "Perseverance", "Ingenuity", "mission"],
+    keywords: [
+      "Viking",
+      "Pathfinder",
+      "Sojourner",
+      "Spirit",
+      "Opportunity",
+      "Curiosity",
+      "InSight",
+      "Perseverance",
+      "Ingenuity",
+      "mission",
+    ],
     overview:
       "Each mission was designed for a specific scientific or technology objective. Landing systems, instruments, mobility, autonomy, power, and mission operations changed substantially across decades.",
     whyItMatters:
@@ -430,9 +568,22 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
       "Ingenuity was a technology demonstration that achieved powered, controlled flight on another planet and later supported rover operations as an aerial scout.",
     ],
     relatedLayers: [
-      { label: "Jezero HiRISE ortho mosaic", mapLayerId: "JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd", availability: "available" },
-      { label: "Gale CTX mosaic", mapLayerId: "Gale_CTX_BlockAdj_dd", availability: "available" },
-      { label: "Global color hillshade", mapLayerId: "Mars_MOLA_blend200ppx_HRSC_ClrShade_clon0dd_200mpp_lzw", availability: "available" },
+      {
+        label: "Jezero HiRISE ortho mosaic",
+        mapLayerId:
+          "JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd",
+        availability: "available",
+      },
+      {
+        label: "Gale CTX mosaic",
+        mapLayerId: "Gale_CTX_BlockAdj_dd",
+        availability: "available",
+      },
+      {
+        label: "Global color hillshade",
+        mapLayerId: "Mars_MOLA_blend200ppx_HRSC_ClrShade_clon0dd_200mpp_lzw",
+        availability: "available",
+      },
     ],
     relatedLandmarks: [
       "perseverance-landing-site",
@@ -459,92 +610,145 @@ export const MARS_MISSIONS: MissionRecord[] = [
   {
     name: "Viking 1",
     missionType: "Orbiters and stationary landers",
-    dates: "Launched August 20, 1975; orbiter arrived June 19, 1976; lander touched down July 20, 1976.",
-    objectives: "Image and map Mars from orbit; study surface composition, atmosphere, weather, and possible signs of life at the Chryse Planitia landing site.",
-    achievements: "Returned extensive orbital and surface images, weather observations, and soil analyses. Its lander made NASA's first successful Mars landing.",
-    technology: "Combined orbiter-lander architecture, long-lived surface platforms, robotic sampling arms, and onboard biological experiments.",
-    limitations: "The lander was stationary and could examine only its immediate surroundings; its life-detection results remain scientifically debated and are not evidence of confirmed life.",
-    explorationLesson: "Long-lived surface instruments and environmental monitoring provide valuable context, while interpretations require careful review of the measurement and experiment limits.",
+    dates:
+      "Launched August 20, 1975; orbiter arrived June 19, 1976; lander touched down July 20, 1976.",
+    objectives:
+      "Image and map Mars from orbit; study surface composition, atmosphere, weather, and possible signs of life at the Chryse Planitia landing site.",
+    achievements:
+      "Returned extensive orbital and surface images, weather observations, and soil analyses. Its lander made NASA's first successful Mars landing.",
+    technology:
+      "Combined orbiter-lander architecture, long-lived surface platforms, robotic sampling arms, and onboard biological experiments.",
+    limitations:
+      "The lander was stationary and could examine only its immediate surroundings; its life-detection results remain scientifically debated and are not evidence of confirmed life.",
+    explorationLesson:
+      "Long-lived surface instruments and environmental monitoring provide valuable context, while interpretations require careful review of the measurement and experiment limits.",
   },
   {
     name: "Viking 2",
     missionType: "Orbiter and stationary lander",
-    dates: "Launched September 9, 1975; orbiter arrived August 7, 1976; lander touched down September 3, 1976.",
-    objectives: "Map Mars from orbit and investigate the surface, atmosphere, weather, and soil at Utopia Planitia.",
-    achievements: "Returned orbital observations and surface images, weather records, and soil analyses from a second landing site.",
-    technology: "Used the Viking orbiter-lander architecture, surface imaging, meteorological instruments, and robotic soil sampling.",
-    limitations: "The lander was stationary and its measurements represented a limited local area; its biological experiment results do not confirm life.",
-    explorationLesson: "Observations from more than one landing site help reveal geographic differences and the limits of generalizing from a single location.",
+    dates:
+      "Launched September 9, 1975; orbiter arrived August 7, 1976; lander touched down September 3, 1976.",
+    objectives:
+      "Map Mars from orbit and investigate the surface, atmosphere, weather, and soil at Utopia Planitia.",
+    achievements:
+      "Returned orbital observations and surface images, weather records, and soil analyses from a second landing site.",
+    technology:
+      "Used the Viking orbiter-lander architecture, surface imaging, meteorological instruments, and robotic soil sampling.",
+    limitations:
+      "The lander was stationary and its measurements represented a limited local area; its biological experiment results do not confirm life.",
+    explorationLesson:
+      "Observations from more than one landing site help reveal geographic differences and the limits of generalizing from a single location.",
   },
   {
     name: "Mars Pathfinder and Sojourner",
     missionType: "Lander and technology-demonstration rover",
     dates: "Launched December 4, 1996; landed July 4, 1997.",
-    objectives: "Demonstrate a lower-cost Mars landing approach and explore rocks and soil at Ares Vallis.",
-    achievements: "Returned surface images, weather data, and in-situ rock and soil measurements; Sojourner demonstrated mobility and proximity science.",
-    technology: "Used parachutes and airbags to cushion landing, then deployed a small rover from the lander.",
-    limitations: "The lander and rover operated for a short surface campaign and within a small area compared with later long-duration rovers.",
-    explorationLesson: "Landing system design, deployment, communications, and surface operations must work as an integrated sequence.",
+    objectives:
+      "Demonstrate a lower-cost Mars landing approach and explore rocks and soil at Ares Vallis.",
+    achievements:
+      "Returned surface images, weather data, and in-situ rock and soil measurements; Sojourner demonstrated mobility and proximity science.",
+    technology:
+      "Used parachutes and airbags to cushion landing, then deployed a small rover from the lander.",
+    limitations:
+      "The lander and rover operated for a short surface campaign and within a small area compared with later long-duration rovers.",
+    explorationLesson:
+      "Landing system design, deployment, communications, and surface operations must work as an integrated sequence.",
   },
   {
     name: "Spirit",
     missionType: "Solar-powered Mars rover",
-    dates: "Launched June 10, 2003; landed at Gusev Crater on January 4, 2004; last communication was in 2010.",
-    objectives: "Study the geology of Gusev Crater and investigate evidence that water may once have altered the region.",
-    achievements: "Found rocks and soils with evidence of past water-related alteration and explored the Columbia Hills.",
-    technology: "Mobile robotic geology with panoramic imaging, instruments for rock analysis, and autonomous navigation capabilities.",
-    limitations: "Solar power, dust, terrain, hardware wear, and communication geometry constrained operations; Spirit became immobilized in soft soil and later ceased communicating.",
-    explorationLesson: "Mobility and power margins strongly shape science return, and an immobilized rover may still contribute through stationary observations.",
+    dates:
+      "Launched June 10, 2003; landed at Gusev Crater on January 4, 2004; last communication was in 2010.",
+    objectives:
+      "Study the geology of Gusev Crater and investigate evidence that water may once have altered the region.",
+    achievements:
+      "Found rocks and soils with evidence of past water-related alteration and explored the Columbia Hills.",
+    technology:
+      "Mobile robotic geology with panoramic imaging, instruments for rock analysis, and autonomous navigation capabilities.",
+    limitations:
+      "Solar power, dust, terrain, hardware wear, and communication geometry constrained operations; Spirit became immobilized in soft soil and later ceased communicating.",
+    explorationLesson:
+      "Mobility and power margins strongly shape science return, and an immobilized rover may still contribute through stationary observations.",
   },
   {
     name: "Opportunity",
     missionType: "Solar-powered Mars rover",
-    dates: "Launched July 7, 2003; landed at Meridiani Planum on January 25, 2004; mission ended in 2018.",
-    objectives: "Study rocks and soils at Meridiani Planum, where orbital observations suggested past water-related mineral deposits.",
-    achievements: "Found evidence of ancient water-related environments and traveled far beyond its originally planned surface campaign.",
-    technology: "Mobile robotic geology with panoramic imaging, instruments for rock analysis, and autonomous navigation capabilities.",
-    limitations: "Solar power, dust, terrain, hardware wear, and communication geometry constrained operations; a planet-encircling dust event contributed to the end of contact.",
-    explorationLesson: "Environmental conditions can affect energy and mission lifetime; long-lived missions must adapt science plans as hardware and conditions change.",
+    dates:
+      "Launched July 7, 2003; landed at Meridiani Planum on January 25, 2004; mission ended in 2018.",
+    objectives:
+      "Study rocks and soils at Meridiani Planum, where orbital observations suggested past water-related mineral deposits.",
+    achievements:
+      "Found evidence of ancient water-related environments and traveled far beyond its originally planned surface campaign.",
+    technology:
+      "Mobile robotic geology with panoramic imaging, instruments for rock analysis, and autonomous navigation capabilities.",
+    limitations:
+      "Solar power, dust, terrain, hardware wear, and communication geometry constrained operations; a planet-encircling dust event contributed to the end of contact.",
+    explorationLesson:
+      "Environmental conditions can affect energy and mission lifetime; long-lived missions must adapt science plans as hardware and conditions change.",
   },
   {
     name: "Curiosity",
     missionType: "Nuclear-powered Mars rover",
-    dates: "Launched November 26, 2011; landed in Gale Crater on August 6, 2012.",
-    objectives: "Assess whether Gale Crater once had environments capable of supporting microbial life and investigate its geology and climate history.",
-    achievements: "Found evidence of ancient habitable lake environments and has studied a long record of sedimentary rocks, including Mount Sharp.",
-    technology: "Introduced the Mars Science Laboratory's sky-crane landing system, a large mobile laboratory, onboard sample analysis, and autonomous driving capabilities.",
-    limitations: "The rover is limited by terrain, energy, communications, instrument condition, and the small area it can directly sample.",
-    explorationLesson: "Autonomous hazard assessment and onboard science tools help a rover work despite communication delays, but do not replace human judgment or prove human systems are ready.",
+    dates:
+      "Launched November 26, 2011; landed in Gale Crater on August 6, 2012.",
+    objectives:
+      "Assess whether Gale Crater once had environments capable of supporting microbial life and investigate its geology and climate history.",
+    achievements:
+      "Found evidence of ancient habitable lake environments and has studied a long record of sedimentary rocks, including Mount Sharp.",
+    technology:
+      "Introduced the Mars Science Laboratory's sky-crane landing system, a large mobile laboratory, onboard sample analysis, and autonomous driving capabilities.",
+    limitations:
+      "The rover is limited by terrain, energy, communications, instrument condition, and the small area it can directly sample.",
+    explorationLesson:
+      "Autonomous hazard assessment and onboard science tools help a rover work despite communication delays, but do not replace human judgment or prove human systems are ready.",
   },
   {
     name: "InSight",
     missionType: "Stationary geophysical lander",
-    dates: "Launched May 5, 2018; landed in Elysium Planitia on November 26, 2018; mission ended in 2022.",
-    objectives: "Study Mars's interior and geophysical activity, including marsquakes and heat flow.",
-    achievements: "Recorded marsquakes and provided data used to investigate the planet's crust, mantle, core, and seismicity.",
-    technology: "Deployed a highly sensitive seismometer and other geophysical instruments on the surface.",
-    limitations: "Its stationary design could not travel to alternate terrain; dust accumulation on solar panels eventually reduced available power.",
-    explorationLesson: "Power margins and environmental effects can end a mission even when scientific instruments remain valuable.",
+    dates:
+      "Launched May 5, 2018; landed in Elysium Planitia on November 26, 2018; mission ended in 2022.",
+    objectives:
+      "Study Mars's interior and geophysical activity, including marsquakes and heat flow.",
+    achievements:
+      "Recorded marsquakes and provided data used to investigate the planet's crust, mantle, core, and seismicity.",
+    technology:
+      "Deployed a highly sensitive seismometer and other geophysical instruments on the surface.",
+    limitations:
+      "Its stationary design could not travel to alternate terrain; dust accumulation on solar panels eventually reduced available power.",
+    explorationLesson:
+      "Power margins and environmental effects can end a mission even when scientific instruments remain valuable.",
   },
   {
     name: "Perseverance",
     missionType: "Astrobiology and sample-caching rover",
-    dates: "Launched July 30, 2020; landed in Jezero Crater on February 18, 2021.",
-    objectives: "Study ancient habitability, seek evidence of past microbial life, collect and cache samples, and test technologies relevant to future exploration.",
-    achievements: "Explores a crater with an ancient lake and delta record; studies rocks and weather, collects samples, and demonstrated oxygen production from the atmosphere with MOXIE.",
-    technology: "Uses terrain-relative navigation during landing, autonomous driving, and a sample-caching system. Instruments include Mastcam-Z, SuperCam, PIXL, SHERLOC, MEDA, and RIMFAX. MOXIE was an oxygen-production technology demonstration, not crew life support.",
-    limitations: "Samples are cached on Mars; their return to Earth depends on a future mission and has not been completed. Scientific observations do not confirm past life.",
-    explorationLesson: "Autonomy, resource demonstrations, and sample curation advance robotic science and help inform future concepts, but do not validate crewed landing, EVA, or survival systems.",
+    dates:
+      "Launched July 30, 2020; landed in Jezero Crater on February 18, 2021.",
+    objectives:
+      "Study ancient habitability, seek evidence of past microbial life, collect and cache samples, and test technologies relevant to future exploration.",
+    achievements:
+      "Explores a crater with an ancient lake and delta record; studies rocks and weather, collects samples, and demonstrated oxygen production from the atmosphere with MOXIE.",
+    technology:
+      "Uses terrain-relative navigation during landing, autonomous driving, and a sample-caching system. Instruments include Mastcam-Z, SuperCam, PIXL, SHERLOC, MEDA, and RIMFAX. MOXIE was an oxygen-production technology demonstration, not crew life support.",
+    limitations:
+      "Samples are cached on Mars; their return to Earth depends on a future mission and has not been completed. Scientific observations do not confirm past life.",
+    explorationLesson:
+      "Autonomy, resource demonstrations, and sample curation advance robotic science and help inform future concepts, but do not validate crewed landing, EVA, or survival systems.",
   },
   {
     name: "Ingenuity",
     missionType: "Technology-demonstration helicopter and aerial scout",
-    dates: "Arrived with Perseverance; first powered flight April 19, 2021; final flight January 18, 2024, after 72 flights.",
-    objectives: "Demonstrate powered, controlled flight in the thin Martian atmosphere; later provide aerial scouting support for rover operations.",
-    achievements: "Became the first aircraft to achieve powered, controlled flight on another planet and substantially exceeded its original demonstration plan.",
-    technology: "A lightweight rotorcraft used autonomous flight control and onboard navigation in an environment with very low atmospheric density.",
-    limitations: "Its performance depended on local conditions, limited communications and energy, and a small-scale technology-demonstration design; the mission ended after flight damage.",
-    explorationLesson: "Aerial perspectives can support route reconnaissance and science planning as a future concept, but Ingenuity was not a human transport or safety system.",
+    dates:
+      "Arrived with Perseverance; first powered flight April 19, 2021; final flight January 18, 2024, after 72 flights.",
+    objectives:
+      "Demonstrate powered, controlled flight in the thin Martian atmosphere; later provide aerial scouting support for rover operations.",
+    achievements:
+      "Became the first aircraft to achieve powered, controlled flight on another planet and substantially exceeded its original demonstration plan.",
+    technology:
+      "A lightweight rotorcraft used autonomous flight control and onboard navigation in an environment with very low atmospheric density.",
+    limitations:
+      "Its performance depended on local conditions, limited communications and energy, and a small-scale technology-demonstration design; the mission ended after flight damage.",
+    explorationLesson:
+      "Aerial perspectives can support route reconnaissance and science planning as a future concept, but Ingenuity was not a human transport or safety system.",
   },
 ];
 
@@ -552,43 +756,106 @@ export const HAZARD_CARDS: HazardCard[] = [
   {
     name: "Thin atmosphere and pressure",
     category: "Environment",
-    explanation: "Mars's atmosphere is mostly carbon dioxide and far thinner than Earth's.",
-    whyItMatters: "The environment is not breathable and requires specially designed pressure and life-support systems for human exploration.",
+    explanation:
+      "Mars's atmosphere is mostly carbon dioxide and far thinner than Earth's.",
+    whyItMatters:
+      "The environment is not breathable and requires specially designed pressure and life-support systems for human exploration.",
     articleId: "environmental-hazards",
   },
   {
     name: "Radiation exposure",
     category: "Environment / health",
-    explanation: "Solar particles and galactic cosmic rays contribute to the radiation environment beyond Earth's protective atmosphere and magnetic field.",
-    whyItMatters: "Exposure assessment and shielding are mission-design concerns; this map does not measure a crew member's dose.",
+    explanation:
+      "Solar particles and galactic cosmic rays contribute to the radiation environment beyond Earth's protective atmosphere and magnetic field.",
+    whyItMatters:
+      "Exposure assessment and shielding are mission-design concerns; this map does not measure a crew member's dose.",
     articleId: "environmental-hazards",
   },
   {
     name: "Dust and reduced visibility",
     category: "Environment / equipment",
-    explanation: "Wind-driven dust can affect visibility and accumulate on exposed surfaces.",
-    whyItMatters: "Dust is relevant to instruments, power systems, seals, mobility, and observation quality.",
+    explanation:
+      "Wind-driven dust can affect visibility and accumulate on exposed surfaces.",
+    whyItMatters:
+      "Dust is relevant to instruments, power systems, seals, mobility, and observation quality.",
     articleId: "environmental-hazards",
   },
   {
     name: "Uncertain terrain",
     category: "Surface",
-    explanation: "Slope, loose material, rocks, cliffs, and data resolution can complicate interpretation of a route.",
-    whyItMatters: "Remote imagery cannot independently certify traversability or reveal every local obstacle.",
+    explanation:
+      "Slope, loose material, rocks, cliffs, and data resolution can complicate interpretation of a route.",
+    whyItMatters:
+      "Remote imagery cannot independently certify traversability or reveal every local obstacle.",
     articleId: "surface-terrain-hazards",
   },
   {
     name: "Suit and life-support dependence",
     category: "Systems",
-    explanation: "Suit pressure, breathable gas, thermal management, communications, and power are interdependent functions.",
-    whyItMatters: "Human surface operations require integrated, validated systems and approved procedures.",
+    explanation:
+      "Suit pressure, breathable gas, thermal management, communications, and power are interdependent functions.",
+    whyItMatters:
+      "Human surface operations require integrated, validated systems and approved procedures.",
     articleId: "spacesuit-life-support",
   },
   {
     name: "Communication delay",
     category: "Mission operations",
-    explanation: "The Earth–Mars distance causes communication delays that vary over time.",
-    whyItMatters: "Mission architectures must support reliable coordination and planned autonomy.",
+    explanation:
+      "The Earth–Mars distance causes communication delays that vary over time.",
+    whyItMatters:
+      "Mission architectures must support reliable coordination and planned autonomy.",
     articleId: "communication-awareness",
+  },
+];
+
+export const LEARNING_SCENARIOS: LearningScenario[] = [
+  {
+    id: "dusty-imagery",
+    title: "A dusty image",
+    situation:
+      "A map image shows a low-contrast patch near a planned science area. The image is several months old, and the mission feed has recently reported regional dust activity.",
+    question: "What is the most scientifically careful interpretation?",
+    choices: [
+      "Treat the patch as confirmed safe, because it appears flat.",
+      "Check the image date, resolution, viewing conditions, and newer independent observations before drawing conclusions.",
+      "Assume the patch is a dust storm at the surface right now.",
+    ],
+    correctChoice: 1,
+    explanation:
+      "The image alone cannot confirm current local conditions or traversability. Date, scale, illumination, and corroborating data matter; operational route decisions require mission-approved products.",
+    articleId: "surface-terrain-hazards",
+  },
+  {
+    id: "delayed-message",
+    title: "A delayed reply",
+    situation:
+      "A fictional surface team sends a status update to Earth and does not receive an immediate reply.",
+    question: "What does this scenario illustrate?",
+    choices: [
+      "Earth can always respond in real time if the message is important.",
+      "Mars missions need predefined communication architecture and autonomy because Earth–Mars communication is delayed.",
+      "A map application can determine the correct emergency response.",
+    ],
+    correctChoice: 1,
+    explanation:
+      "Communication delay is a mission architecture constraint. This educational scenario does not prescribe any response; real procedures would be designed, verified, and trained for the mission.",
+    articleId: "communication-awareness",
+  },
+  {
+    id: "rover-discovery",
+    title: "A promising rock",
+    situation:
+      "A rover detects minerals and textures consistent with past interaction with water at an ancient lake site.",
+    question: "Which conclusion is supported without overstating the evidence?",
+    choices: [
+      "The rover has confirmed ancient life.",
+      "The site records geological evidence of past water; habitability and any evidence of life require careful, separate assessment.",
+      "The site is automatically safe for humans.",
+    ],
+    correctChoice: 1,
+    explanation:
+      "Geological evidence of water and potential habitability is not confirmation of life and says nothing by itself about present-day human safety. Interpretations must match the measurements and their limits.",
+    articleId: "past-missions",
   },
 ];

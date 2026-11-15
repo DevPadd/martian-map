@@ -73,32 +73,96 @@ body {
 
 .mars-distance-popup-card {
   position: relative;
-  min-width: 13rem;
+  box-sizing: border-box;
+  width: min(17rem, calc(100vw - 1.5rem));
   border: 1px solid rgb(251 146 60 / 70%);
   border-radius: 0.25rem;
   background: rgb(0 0 0 / 95%);
-  padding: 0.75rem 2rem 0.75rem 0.875rem;
+  padding: 0.6rem 0.65rem;
   color: rgb(254 215 170);
   box-shadow: 0 8px 24px rgb(0 0 0 / 50%);
 }
 
 .mars-distance-popup-title {
+  padding-right: 1.25rem;
   color: rgb(251 146 60);
   font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .mars-distance-popup-value {
   margin-top: 0.25rem;
   font-family: var(--font-mono);
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 700;
 }
 
+.mars-distance-estimates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.55rem;
+  border-top: 1px solid rgb(251 146 60 / 25%);
+  padding-top: 0.5rem;
+  font-size: 0.65rem;
+}
+
+.mars-distance-input-group {
+  display: grid;
+  gap: 0.2rem;
+  color: rgb(254 215 170 / 80%);
+}
+
+.mars-distance-input-row {
+  display: flex;
+  min-width: 0;
+}
+
+.mars-distance-input-row input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgb(251 146 60 / 40%);
+  border-radius: 0.2rem;
+  background: rgb(15 15 15);
+  padding: 0.25rem 0.35rem;
+  color: rgb(255 237 213);
+  font: inherit;
+}
+
+.mars-distance-input-row input:focus-visible {
+  outline: 2px solid rgb(251 146 60);
+  outline-offset: 1px;
+}
+
+.mars-distance-estimate-results {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.2rem;
+  border-left: 2px solid rgb(251 146 60 / 70%);
+  padding-left: 0.45rem;
+  color: rgb(254 215 170 / 75%);
+}
+
+.mars-distance-estimate-results strong {
+  color: rgb(255 237 213);
+  font-family: var(--font-mono);
+}
+
+.mars-distance-earth-time {
+  display: block;
+  color: rgb(254 215 170 / 55%);
+  font-size: 0.6rem;
+}
+
+.mars-distance-estimate-disclaimer {
+  color: rgb(254 215 170 / 55%);
+  font-size: 0.55rem;
+  line-height: 1.4;
+}
+
 .mars-distance-popup-help {
-  margin-top: 0.25rem;
+  margin-top: 0.4rem;
   color: rgb(254 215 170 / 65%);
   font-size: 0.65rem;
 }

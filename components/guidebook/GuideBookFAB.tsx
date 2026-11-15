@@ -141,10 +141,6 @@ export default function GuideBookFAB() {
                   )}
                 </section>
               ))}
-
-              <div className="border-t border-orange-500/25 pt-4 text-xs text-orange-300/60">
-                M.A.R.S. · Mission Atlas & Reconnaissance System
-              </div>
             </div>
           </div>
         </div>

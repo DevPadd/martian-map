@@ -42,6 +42,8 @@ Demo: https://martian-map-eight.vercel.app/
 - [x] clickable landmarks, which opens a popup and displays informations
 - [x] Rover traverse path?
 - [x] Distance calculator
+- [ ] Add estimated travel time and food consumption for distance calculator
+- [ ] add more map layers
 
 ## Would be nice to have
 

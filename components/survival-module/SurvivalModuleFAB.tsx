@@ -269,10 +269,6 @@ export default function SurvivalModuleFAB({
               </button>
             </header>
 
-            <div className="shrink-0 border-b border-amber-400/25 bg-amber-950/25 px-4 py-2 text-xs leading-5 text-amber-100/80 sm:px-6">
-              {SURVIVAL_MODULE_INTRO}
-            </div>
-
             {view !== "article" && (
               <nav
                 className="flex shrink-0 gap-2 overflow-x-auto border-b border-orange-500/20 px-4 py-3 sm:px-6"

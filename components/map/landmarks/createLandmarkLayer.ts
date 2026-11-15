@@ -41,7 +41,7 @@ function createLandmarkFeature(landmark: MarsLandmark): Feature<Point> {
         text: landmark.name,
         offsetY: 16,
         font: "14px jetbrains-mono, monospace",
-        fill: new Fill({ color: "#fff" }),
+        fill: new Fill({ color: "#fdba74" }),
         stroke: new Stroke({ color: "#111827", width: 3 }),
       }),
     }),

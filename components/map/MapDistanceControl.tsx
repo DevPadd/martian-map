@@ -19,6 +19,9 @@ import Style from "ol/style/Style.js";
 
 import { calculateMarsDistance } from "./marsProjection";
 
+const MARS_SOL_SECONDS = 88_775.244;
+const EARTH_DAY_SECONDS = 86_400;
+
 type MapDistanceControlProps = {
   map: Map | null;
 };
@@ -31,6 +34,18 @@ function formatDistance(distanceMeters: number): string {
   return `${distanceMeters.toFixed(0)} m`;
 }
 
+function getPositiveNumber(value: string): number | null {
+  if (!value.trim()) return null;
+
+  const parsedValue = Number(value);
+  return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : null;
+}
+
+function formatEarthDays(solCount: number): string {
+  const earthDays = (solCount * MARS_SOL_SECONDS) / EARTH_DAY_SECONDS;
+  return `${earthDays.toFixed(2)} Earth days`;
+}
+
 export default function MapDistanceControl({ map }: MapDistanceControlProps) {
   const popupElement = useRef<HTMLDivElement>(null);
   const source = useRef<VectorSource | null>(null);
@@ -41,6 +56,19 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
   const [isMeasuring, setIsMeasuring] = useState(false);
   const [distanceMeters, setDistanceMeters] = useState<number | null>(null);
   const [measurementError, setMeasurementError] = useState<string | null>(null);
+  const [travelRateKmPerSol, setTravelRateKmPerSol] = useState("");
+  const [foodKgPerPersonPerSol, setFoodKgPerPersonPerSol] = useState("");
+
+  const travelRate = getPositiveNumber(travelRateKmPerSol);
+  const foodAllocation = getPositiveNumber(foodKgPerPersonPerSol);
+  const estimatedSols =
+    distanceMeters !== null && travelRate !== null
+      ? distanceMeters / 1000 / travelRate
+      : null;
+  const estimatedFoodKg =
+    estimatedSols !== null && foodAllocation !== null
+      ? estimatedSols * foodAllocation
+      : null;
 
   const clearMeasurement = useCallback(() => {
     source.current?.clear();
@@ -218,8 +246,8 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
       <div
         ref={popupElement}
         className="mars-distance-popup"
-        role="status"
-        aria-live="polite"
+        role="region"
+        aria-label="Mars route distance and planning estimates"
       >
         {(distanceMeters !== null || measurementError) && (
           <div className="mars-distance-popup-card">
@@ -235,13 +263,80 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
             {measurementError ? (
               <p className="mars-distance-popup-value">{measurementError}</p>
             ) : (
-              <p className="mars-distance-popup-value">
-                {formatDistance(distanceMeters ?? 0)}
-              </p>
+              <>
+                <p className="mars-distance-popup-value">
+                  {formatDistance(distanceMeters ?? 0)}
+                </p>
+                <div className="mars-distance-estimates">
+                  <label className="mars-distance-input-group">
+                    <span>Travel rate (km/sol)</span>
+                    <span className="mars-distance-input-row">
+                      <input
+                        type="number"
+                        min="0"
+                        step="any"
+                        inputMode="decimal"
+                        value={travelRateKmPerSol}
+                        onChange={(event) =>
+                          setTravelRateKmPerSol(event.target.value)
+                        }
+                        aria-label="Planned travel distance per sol in kilometers"
+                        placeholder="insert number"
+                      />
+                    </span>
+                  </label>
+                  <label className="mars-distance-input-group">
+                    <span>Number of Crew Members</span>
+                    <span className="mars-distance-input-row">
+                      <input
+                        type="number"
+                        min="0"
+                        step="any"
+                        inputMode="decimal"
+                        value={foodKgPerPersonPerSol}
+                        onChange={(event) =>
+                          setFoodKgPerPersonPerSol(event.target.value)
+                        }
+                        aria-label="Food allocation per person per sol in kilograms"
+                        placeholder="insert number"
+                      />
+                    </span>
+                  </label>
+                  <div
+                    className="mars-distance-estimate-results"
+                    aria-live="polite"
+                  >
+                    <p>
+                      Travel time:{" "}
+                      <strong>
+                        {estimatedSols === null
+                          ? "—"
+                          : `${estimatedSols.toFixed(2)} sols`}
+                      </strong>
+                      {estimatedSols !== null && (
+                        <span className="mars-distance-earth-time">
+                          {" "}
+                          ≈ {formatEarthDays(estimatedSols)}
+                        </span>
+                      )}
+                    </p>
+                    <p>
+                      <strong>
+                        {estimatedFoodKg === null
+                          ? "—"
+                          : `${estimatedFoodKg.toFixed(2)} kg`}
+                      </strong>{" "}
+                      Ration/person
+                    </p>
+                  </div>
+                  {/* <p className="mars-distance-estimate-disclaimer">
+                    1 sol = 24h 39m 35s (1.0275 Earth days). Disclaimer: This is
+                    an estimation; it excludes terrain, rest, EVA limits,
+                    ration's nutrition and delays.
+                  </p> */}
+                </div>
+              </>
             )}
-            <p className="mars-distance-popup-help">
-              Drag to trace a route. Press Escape to cancel.
-            </p>
           </div>
         )}
       </div>
