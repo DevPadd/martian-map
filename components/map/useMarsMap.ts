@@ -7,6 +7,7 @@ import Map from "ol/Map.js";
 import View from "ol/View.js";
 import TileLayer from "ol/layer/Tile.js";
 import ScaleLine from "ol/control/ScaleLine.js";
+import { defaults as defaultControls } from "ol/control/defaults.js";
 import WMTS, { optionsFromCapabilities } from "ol/source/WMTS.js";
 import WMTSCapabilities from "ol/format/WMTSCapabilities.js";
 import { get as getProjection } from "ol/proj.js";
@@ -23,6 +24,9 @@ import {
   configureMarsPointResolution,
   registerMarsProjection,
 } from "./marsProjection";
+import { createLandmarkLayer } from "./landmarks/createLandmarkLayer";
+import type VectorLayer from "ol/layer/Vector.js";
+import type VectorSource from "ol/source/Vector.js";
 
 const GLOBAL_MARS_LAYER_INDEX = 1;
 
@@ -76,7 +80,6 @@ async function loadWmtsLayer(config: MapLayerConfig, signal: AbortSignal) {
     resolutions: options.tileGrid.getResolutions(),
     source: new WMTS({
       ...options,
-      attributions: "Imagery: NASA / USGS / MRO CTX",
     }),
     projection,
   };
@@ -95,6 +98,9 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
   const [status, setStatus] = useState(
     `Loading ${MAP_LAYERS[0].name} imagery...`,
   );
+  const [map, setMap] = useState<Map | null>(null);
+  const [landmarkLayer, setLandmarkLayer] =
+    useState<VectorLayer<VectorSource> | null>(null);
   const [cursorCoordinates, setCursorCoordinates] =
     useState<CursorCoordinates | null>(null);
 
@@ -157,10 +163,7 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
         }
 
         const [globalImage, selectedImage] = await Promise.all([
-          loadWmtsLayer(
-            MAP_LAYERS[GLOBAL_MARS_LAYER_INDEX],
-            controller.signal,
-          ),
+          loadWmtsLayer(MAP_LAYERS[GLOBAL_MARS_LAYER_INDEX], controller.signal),
           selectedLayerIndex === GLOBAL_MARS_LAYER_INDEX
             ? Promise.resolve(null)
             : loadWmtsLayer(layerConfig, controller.signal),
@@ -184,14 +187,11 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
             }
           },
         );
-        const globalTileLoadKey = globalImage.source.on(
-          "tileloadend",
-          () => {
-            if (selectedLayerIndexRef.current === GLOBAL_MARS_LAYER_INDEX) {
-              setStatus(`${MAP_LAYERS[GLOBAL_MARS_LAYER_INDEX].name} loaded.`);
-            }
-          },
-        );
+        const globalTileLoadKey = globalImage.source.on("tileloadend", () => {
+          if (selectedLayerIndexRef.current === GLOBAL_MARS_LAYER_INDEX) {
+            setStatus(`${MAP_LAYERS[GLOBAL_MARS_LAYER_INDEX].name} loaded.`);
+          }
+        });
         globalSourceKeys.current = [globalTileErrorKey, globalTileLoadKey];
 
         if (selectedImage) {
@@ -214,17 +214,18 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
           extent: globalImage.extent,
           center: JEZERO_CENTER,
           zoom: JEZERO_ZOOM,
-          zoomFactor:
-            globalImage.resolutions[0] / globalImage.resolutions[1],
+          zoomFactor: globalImage.resolutions[0] / globalImage.resolutions[1],
           maxZoom:
             selectedLayerIndex === GLOBAL_MARS_LAYER_INDEX
               ? globalTileCount - 1
               : (selectedImage?.resolutions.length ?? globalTileCount) - 1,
         });
+        const landmarkLayer = createLandmarkLayer();
         const map = new Map({
           target: mapElement.current,
-          layers: [baseLayer, nextImageryLayer],
+          layers: [baseLayer, nextImageryLayer, landmarkLayer],
           view,
+          controls: defaultControls({ zoom: false }),
         });
         map.addControl(
           new ScaleLine({
@@ -247,6 +248,8 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
         globalLayer.current = baseLayer;
         imageryLayer.current = nextImageryLayer;
         mapInstance.current = map;
+        setMap(map);
+        setLandmarkLayer(landmarkLayer);
         (
           globalThis as typeof globalThis & { marsMapDebug?: Map }
         ).marsMapDebug = map;
@@ -292,6 +295,8 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
 
   return {
     cursorCoordinates,
+    landmarkLayer,
+    map,
     onLayerChange,
     selectedLayerIndex,
     status,
