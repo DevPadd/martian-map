@@ -88,7 +88,7 @@ const defaultStyle: StyleFunction = (feature) => {
     return new Style({
       image: new CircleStyle({
         radius: 4,
-        fill: new Fill({ color: "#f87171" }),
+        fill: new Fill({ color: "#fb923c" }),
         stroke: new Stroke({ color: "#111827", width: 1.5 }),
       }),
     });
@@ -96,18 +96,18 @@ const defaultStyle: StyleFunction = (feature) => {
 
   if (geometryType === "LineString" || geometryType === "MultiLineString") {
     return new Style({
-      stroke: new Stroke({ color: "#f87171", width: 2.5 }),
+      stroke: new Stroke({ color: "#fb923c", width: 2.5 }),
     });
   }
 
   return new Style({
-    fill: new Fill({ color: "rgba(248, 113, 113, 0.25)" }),
-    stroke: new Stroke({ color: "#f87171", width: 2 }),
+    fill: new Fill({ color: "rgba(251, 146, 60, 0.25)" }),
+    stroke: new Stroke({ color: "#fb923c", width: 2 }),
   });
 };
 
 // Add one entry per file in public/data; custom styles are optional.
-export const MISSION_DATA_LAYER_CONFIG = [
+export const MISSION_DATA_LAYER_CONFIG: readonly MissionDataLayerConfig[] = [
   {
     id: "roverPath",
     file: "Rover Drive Path.geojson",
@@ -132,11 +132,11 @@ export const MISSION_DATA_LAYER_CONFIG = [
     id: "layeredCraters",
     file: "alagain_martian_crater_layered_db.geojson",
     label: "Layered ejecta craters",
-    description: "Markers are colored by ejecta morphology.",
+    // description: "Markers are colored by ejecta morphology.",
     visibleByDefault: false,
     style: layeredCratersStyle,
   },
-] satisfies readonly MissionDataLayerConfig[];
+];
 
 export type MissionDataLayerVisibility = Record<string, boolean>;
 

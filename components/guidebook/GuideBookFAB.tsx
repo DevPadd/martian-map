@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
+import { Galaxy, Info } from "lucide-react";
 import {
   GUIDEBOOK_INTRO,
   GUIDEBOOK_SECTIONS,
@@ -67,23 +67,13 @@ export default function GuideBookFAB() {
       <button
         ref={triggerRef}
         type="button"
-        className="fixed cursor-pointer bottom-20 right-2 z-90 flex  items-center gap-1 border border-red-400/60 bg-black/90 p-[0.3rem] text-sm font-semibold text-red-500 shadow-lg shadow-black/40 transition hover:bg-red-950  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
+        className="fixed cursor-pointer bottom-20 right-2 z-90 flex  items-center gap-1 border border-orange-400/60 bg-black/90 p-[0.3rem] text-sm font-semibold text-orange-500 shadow-lg shadow-black/40 transition hover:bg-orange-950  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
         onClick={() => setIsOpen(true)}
         aria-label="Open mission field guide"
         aria-haspopup="dialog"
         aria-expanded={isOpen}
       >
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          className="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.7"
-        >
-          <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22z" />
-          <path d="M4 5.5v14A2.5 2.5 0 0 1 6.5 17H20M8 7h8M8 10h8" />
-        </svg>
+        <Info />
       </button>
 
       {isOpen && (
@@ -100,16 +90,14 @@ export default function GuideBookFAB() {
             aria-labelledby="guidebook-title"
             aria-describedby="guidebook-intro"
             tabIndex={-1}
-            className="relative max-h-[min(88dvh,52rem)] w-full max-w-3xl overflow-y-auto border border-red-500/50 bg-[#090909] text-red-100 shadow-2xl shadow-black"
+            className="relative max-h-[min(88dvh,52rem)] w-full max-w-3xl overflow-y-auto border border-orange-500/50 bg-[#090909] text-orange-100 shadow-2xl shadow-black"
           >
-            <div className="sticky top-0 z-10 flex items-start justify-between gap-6 border-b border-red-500/30 bg-[#090909]/95 px-6 py-5 backdrop-blur">
-              <div>
-                <p className="mb-1 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-red-400">
-                  Surface operations · Crew orientation
-                </p>
+            <div className="sticky top-0 z-10 flex items-start justify-between gap-6 border-b border-orange-500/30 bg-[#090909]/95 px-6 py-5 backdrop-blur">
+              <div className="flex items-center gap-3 text-orange-500">
+                <Galaxy className="h-10 w-10" />
                 <h1
                   id="guidebook-title"
-                  className="text-2xl font-bold tracking-wide text-red-200 sm:text-3xl"
+                  className="text-2xl font-bold tracking-wide sm:text-3xl"
                 >
                   {GUIDEBOOK_TITLE}
                 </h1>
@@ -118,7 +106,7 @@ export default function GuideBookFAB() {
                 ref={closeRef}
                 type="button"
                 onClick={closeGuide}
-                className="shrink-0 border border-red-500/40 px-3 py-1 text-xl text-red-300 transition hover:bg-red-500/15 focus-visible:outline-2 focus-visible:outline-red-400"
+                className="shrink-0 border border-orange-500/40 px-3 py-1 text-xl text-orange-300 transition hover:bg-orange-500/15 focus-visible:outline-2 focus-visible:outline-orange-400"
                 aria-label="Close mission field guide"
               >
                 ×
@@ -128,24 +116,24 @@ export default function GuideBookFAB() {
             <div className="space-y-7 px-6 py-6 sm:px-8">
               <p
                 id="guidebook-intro"
-                className="border-l-2 border-red-500 pl-4 text-base leading-7 text-red-100/90"
+                className="border-l-2 border-orange-500 pl-4 text-base leading-7 text-orange-100/90"
               >
                 {GUIDEBOOK_INTRO}
               </p>
 
               {GUIDEBOOK_SECTIONS.map((section, index) => (
                 <section key={section.heading} className="space-y-2">
-                  <h2 className="flex items-center gap-3 text-lg font-semibold text-red-300">
-                    <span className="font-mono text-xs text-red-500">
+                  <h2 className="flex items-center gap-3 text-lg font-semibold text-orange-300">
+                    <span className="font-mono text-xs text-orange-500">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     {section.heading}
                   </h2>
-                  <p className="text-sm leading-6 text-red-100/75">
+                  <p className="text-sm leading-6 text-orange-100/75">
                     {section.body}
                   </p>
                   {section.steps && (
-                    <ul className="list-inside list-disc space-y-1 pl-2 text-sm leading-6 text-red-100/75 marker:text-red-500">
+                    <ul className="list-inside list-disc space-y-1 pl-2 text-sm leading-6 text-orange-100/75 marker:text-orange-500">
                       {section.steps.map((step) => (
                         <li key={step}>{step}</li>
                       ))}
@@ -154,7 +142,7 @@ export default function GuideBookFAB() {
                 </section>
               ))}
 
-              <div className="border-t border-red-500/25 pt-4 text-xs text-red-300/60">
+              <div className="border-t border-orange-500/25 pt-4 text-xs text-orange-300/60">
                 M.A.R.S. · Mission Atlas & Reconnaissance System
               </div>
             </div>

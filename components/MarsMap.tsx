@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 
+import SurvivalModuleFAB from "./survival-module/SurvivalModuleFAB";
 import MapToolbar from "./map/MapToolbar";
 import GeoJSONLayersControl from "./map/GeoJSONLayersControl";
 import MapScaleControl from "./map/MapScaleControl";
@@ -47,14 +48,16 @@ export default function MarsMap() {
         visibility={missionDataLayerVisibility}
         onVisibilityChange={onMissionDataLayerVisibilityChange}
       />
+
+      <SurvivalModuleFAB map={map} onLayerChange={onLayerChange} />
       <GuideBookFAB />
       <div className="absolute bottom-20 right-12 z-50">
         <MapZoomControl map={map} />
       </div>
-      <div className="fixed bottom-30 right-2 z-50">
+      <div className="fixed bottom-50 right-2 z-50">
         <MapDistanceControl map={map} />
       </div>
-      <div className="fixed bottom-4 left-1/2 z-40 -translate-x-1/2">
+      <div className="fixed bottom-4  left-1/2 z-40 -translate-x-1/2">
         <MapScaleControl map={map} />
       </div>
       <LandmarkPopup

@@ -63,14 +63,14 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
       source: measurementSource,
       style: new Style({
         stroke: new Stroke({
-          color: "#ff0000",
+          color: "#fb923c",
           width: 3,
           lineDash: [8, 6],
         }),
         image: new CircleStyle({
           radius: 4,
-          fill: new Fill({ color: "#ff0000" }),
-          stroke: new Stroke({ color: "#ff0000", width: 1.5 }),
+          fill: new Fill({ color: "#fb923c" }),
+          stroke: new Stroke({ color: "#fb923c", width: 1.5 }),
         }),
       }),
       properties: { title: "Mars distance measurement" },
@@ -119,14 +119,14 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
       freehand: true,
       style: new Style({
         stroke: new Stroke({
-          color: "#ff0000",
+          color: "#fb923c",
           width: 3,
           lineDash: [8, 6],
         }),
         image: new CircleStyle({
           radius: 4,
-          fill: new Fill({ color: "#ff0000" }),
-          stroke: new Stroke({ color: "#ff0000", width: 1.5 }),
+          fill: new Fill({ color: "#fb923c" }),
+          stroke: new Stroke({ color: "#fb923c", width: 1.5 }),
         }),
       }),
     });
@@ -208,12 +208,12 @@ export default function MapDistanceControl({ map }: MapDistanceControlProps) {
     <div className="mars-distance-control">
       <button
         type="button"
-        className="mars-distance-button cursor-pointer z-90 flex  items-center gap-1 border border-red-400/60 bg-black/90 p-[0.3rem] text-sm font-semibold text-red-500 shadow-lg shadow-black/40 transition hover:bg-red-950  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400"
+        className="mars-distance-button cursor-pointer z-90 flex  items-center gap-1 border border-orange-400/60 bg-black/90 p-[0.3rem] text-sm font-semibold text-orange-400 shadow-lg shadow-black/40 transition hover:bg-orange-950  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
         disabled={!map}
         onClick={isMeasuring ? cancelMeasurement : startMeasurement}
         aria-pressed={isMeasuring}
       >
-        {isMeasuring ? <X /> : <MapPinPen className="text-red-500" />}
+        {isMeasuring ? <X /> : <MapPinPen className="text-orange-400" />}
       </button>
       <div
         ref={popupElement}

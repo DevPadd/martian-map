@@ -23,6 +23,12 @@ export const MAP_LAYERS = [
     capabilitiesUrl:
       "https://trek.nasa.gov/tiles/Mars/EQ/JEZ_hirise_soc_006_orthoMosaic_25cm_Eqc_latTs0_lon0_first_dd/1.0.0/WMTSCapabilities.xml",
   },
+  {
+    id: "Gale_CTX_BlockAdj_dd",
+    name: "MRO CTX, Gale Crater Mosaic",
+    capabilitiesUrl:
+      "https://trek.nasa.gov/tiles/Mars/EQ/Gale_CTX_BlockAdj_dd/1.0.0/WMTSCapabilities.xml",
+  },
 ] as const satisfies readonly MapLayerConfig[];
 
 export const JEZERO_CENTER: [number, number] = [77.3835, 18.4836];

@@ -40,7 +40,7 @@ Demo: https://martian-map-eight.vercel.app/
 - [x] survival guidebook
 - [x] multiple layers (CTX, Topography, etc)
 - [x] clickable landmarks, which opens a popup and displays informations
-- [ ] Rover traverse path?
+- [x] Rover traverse path?
 - [x] Distance calculator
 
 ## Would be nice to have
