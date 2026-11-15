@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 
-import Map from "ol/Map.js";
+import OLMap from "ol/Map.js";
 import View from "ol/View.js";
 import TileLayer from "ol/layer/Tile.js";
 import { defaults as defaultControls } from "ol/control/defaults.js";
@@ -26,7 +26,10 @@ import {
 import { createLandmarkLayer } from "./landmarks/createLandmarkLayer";
 import type VectorLayer from "ol/layer/Vector.js";
 import type VectorSource from "ol/source/Vector.js";
-import { createMissionDataLayers } from "./missionDataLayers";
+import {
+  createInitialMissionDataLayerVisibility,
+  createMissionDataLayers,
+} from "./missionDataLayers";
 
 const GLOBAL_MARS_LAYER_INDEX = 1;
 
@@ -86,26 +89,28 @@ async function loadWmtsLayer(config: MapLayerConfig, signal: AbortSignal) {
 }
 
 export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
-  const mapInstance = useRef<Map | null>(null);
+  const mapInstance = useRef<OLMap | null>(null);
   const imageryLayer = useRef<TileLayer<WMTS> | null>(null);
   const globalLayer = useRef<TileLayer<WMTS> | null>(null);
   const globalMaxZoom = useRef(0);
   const globalSourceKeys = useRef<EventsKey[]>([]);
   const pointerMoveKey = useRef<EventsKey | undefined>(undefined);
   const selectedLayerIndexRef = useRef(0);
-  const roverPathLayer = useRef<VectorLayer<VectorSource> | null>(null);
-  const samplingLocationsLayer = useRef<VectorLayer<VectorSource> | null>(null);
-  const roverPathVisibleRef = useRef(true);
-  const samplingLocationsVisibleRef = useRef(true);
+  const missionDataLayersRef = useRef(
+    new Map<string, VectorLayer<VectorSource>>(),
+  );
+  const missionDataLayerVisibilityRef = useRef(
+    createInitialMissionDataLayerVisibility(),
+  );
 
   const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
-  const [roverPathVisible, setRoverPathVisible] = useState(true);
-  const [samplingLocationsVisible, setSamplingLocationsVisible] =
-    useState(true);
+  const [missionDataLayerVisibility, setMissionDataLayerVisibility] = useState(
+    createInitialMissionDataLayerVisibility,
+  );
   const [status, setStatus] = useState(
     `Loading ${MAP_LAYERS[0].name} imagery...`,
   );
-  const [map, setMap] = useState<Map | null>(null);
+  const [map, setMap] = useState<OLMap | null>(null);
   const [landmarkLayer, setLandmarkLayer] =
     useState<VectorLayer<VectorSource> | null>(null);
   const [cursorCoordinates, setCursorCoordinates] =
@@ -120,17 +125,14 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
     setSelectedLayerIndex(index);
   }, []);
 
-  const onRoverPathVisibilityChange = useCallback((visible: boolean) => {
-    roverPathVisibleRef.current = visible;
-    roverPathLayer.current?.setVisible(visible);
-    setRoverPathVisible(visible);
-  }, []);
-
-  const onSamplingLocationsVisibilityChange = useCallback(
-    (visible: boolean) => {
-      samplingLocationsVisibleRef.current = visible;
-      samplingLocationsLayer.current?.setVisible(visible);
-      setSamplingLocationsVisible(visible);
+  const onMissionDataLayerVisibilityChange = useCallback(
+    (id: string, visible: boolean) => {
+      missionDataLayerVisibilityRef.current = {
+        ...missionDataLayerVisibilityRef.current,
+        [id]: visible,
+      };
+      missionDataLayersRef.current.get(id)?.setVisible(visible);
+      setMissionDataLayerVisibility(missionDataLayerVisibilityRef.current);
     },
     [],
   );
@@ -244,19 +246,17 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
               : (selectedImage?.resolutions.length ?? globalTileCount) - 1,
         });
         const landmarkLayer = createLandmarkLayer();
-        missionDataLayers.roverPathLayer.setVisible(
-          roverPathVisibleRef.current,
-        );
-        missionDataLayers.samplingLocationsLayer.setVisible(
-          samplingLocationsVisibleRef.current,
-        );
-        const map = new Map({
+        for (const [id, layer] of missionDataLayers) {
+          layer.setVisible(
+            missionDataLayerVisibilityRef.current[id] ?? false,
+          );
+        }
+        const map = new OLMap({
           target: mapElement.current,
           layers: [
             baseLayer,
             nextImageryLayer,
-            missionDataLayers.roverPathLayer,
-            missionDataLayers.samplingLocationsLayer,
+            ...missionDataLayers.values(),
             landmarkLayer,
           ],
           view,
@@ -271,14 +271,12 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
 
         globalLayer.current = baseLayer;
         imageryLayer.current = nextImageryLayer;
-        roverPathLayer.current = missionDataLayers.roverPathLayer;
-        samplingLocationsLayer.current =
-          missionDataLayers.samplingLocationsLayer;
+        missionDataLayersRef.current = missionDataLayers;
         mapInstance.current = map;
         setMap(map);
         setLandmarkLayer(landmarkLayer);
         (
-          globalThis as typeof globalThis & { marsMapDebug?: Map }
+          globalThis as typeof globalThis & { marsMapDebug?: OLMap }
         ).marsMapDebug = map;
         setStatus(`Map ready; loading ${layerConfig.name}...`);
       } catch (error) {
@@ -315,8 +313,7 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
       mapInstance.current = null;
       imageryLayer.current = null;
       globalLayer.current = null;
-      roverPathLayer.current = null;
-      samplingLocationsLayer.current = null;
+      missionDataLayersRef.current.clear();
       globalMaxZoom.current = 0;
     },
     [],
@@ -325,13 +322,11 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
   return {
     cursorCoordinates,
     landmarkLayer,
+    missionDataLayerVisibility,
     map,
     onLayerChange,
-    onRoverPathVisibilityChange,
-    onSamplingLocationsVisibilityChange,
-    roverPathVisible,
+    onMissionDataLayerVisibilityChange,
     selectedLayerIndex,
-    samplingLocationsVisible,
     status,
   };
 }

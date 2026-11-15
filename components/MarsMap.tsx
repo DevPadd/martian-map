@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 
 import MapToolbar from "./map/MapToolbar";
+import GeoJSONLayersControl from "./map/GeoJSONLayersControl";
 import MapScaleControl from "./map/MapScaleControl";
 import MapZoomControl from "./map/MapZoomControl";
 import MapDistanceControl from "./map/MapDistanceControl";
@@ -24,11 +25,9 @@ export default function MarsMap() {
     landmarkLayer,
     map,
     onLayerChange,
-    onRoverPathVisibilityChange,
-    onSamplingLocationsVisibilityChange,
-    roverPathVisible,
+    onMissionDataLayerVisibilityChange,
+    missionDataLayerVisibility,
     selectedLayerIndex,
-    samplingLocationsVisible,
   } = useMarsMap(mapElement);
   const { closePopup, selectedLandmark } = useLandmarkPopup(
     map,
@@ -43,12 +42,10 @@ export default function MarsMap() {
         cursorCoordinates={cursorCoordinates}
         onLayerChange={onLayerChange}
         selectedLayerIndex={selectedLayerIndex}
-        roverPathVisible={roverPathVisible}
-        samplingLocationsVisible={samplingLocationsVisible}
-        onRoverPathVisibilityChange={onRoverPathVisibilityChange}
-        onSamplingLocationsVisibilityChange={
-          onSamplingLocationsVisibilityChange
-        }
+      />
+      <GeoJSONLayersControl
+        visibility={missionDataLayerVisibility}
+        onVisibilityChange={onMissionDataLayerVisibilityChange}
       />
       <GuideBookFAB />
       <div className="absolute bottom-20 right-12 z-50">
