@@ -1,10 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { MotionConfig } from "motion/react";
 
 import SurvivalModuleFAB from "./survival-module/SurvivalModuleFAB";
 import MapToolbar from "./map/MapToolbar";
 import GeoJSONLayersControl from "./map/GeoJSONLayersControl";
+import RegionalMapLayersControl from "./map/RegionalMapLayersControl";
 import MapScaleControl from "./map/MapScaleControl";
 import MapZoomControl from "./map/MapZoomControl";
 import MapDistanceControl from "./map/MapDistanceControl";
@@ -27,7 +29,9 @@ export default function MarsMap() {
     map,
     onLayerChange,
     onMissionDataLayerVisibilityChange,
+    onRegionalMapLayerVisibilityChange,
     missionDataLayerVisibility,
+    regionalMapLayerVisibility,
     selectedLayerIndex,
   } = useMarsMap(mapElement);
   const { closePopup, selectedLandmark } = useLandmarkPopup(
@@ -37,19 +41,30 @@ export default function MarsMap() {
   );
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-white">
+    <MotionConfig reducedMotion="user">
+      <div className="relative h-dvh w-full overflow-hidden bg-white">
       <div ref={mapElement} className="h-full w-full" />
       <MapToolbar
         cursorCoordinates={cursorCoordinates}
         onLayerChange={onLayerChange}
         selectedLayerIndex={selectedLayerIndex}
       />
-      <GeoJSONLayersControl
-        visibility={missionDataLayerVisibility}
-        onVisibilityChange={onMissionDataLayerVisibilityChange}
-      />
+      <div className="fixed left-2 right-2 top-24 z-30 flex max-h-[calc(100dvh-7rem)] flex-col gap-2 overflow-y-auto sm:left-auto sm:right-4 sm:top-20 sm:w-64">
+        <GeoJSONLayersControl
+          visibility={missionDataLayerVisibility}
+          onVisibilityChange={onMissionDataLayerVisibilityChange}
+        />
+        <RegionalMapLayersControl
+          visibility={regionalMapLayerVisibility}
+          onVisibilityChange={onRegionalMapLayerVisibilityChange}
+        />
+      </div>
 
-      <SurvivalModuleFAB map={map} onLayerChange={onLayerChange} />
+      <SurvivalModuleFAB
+        map={map}
+        onLayerChange={onLayerChange}
+        onRegionalLayerVisibilityChange={onRegionalMapLayerVisibilityChange}
+      />
       <GuideBookFAB />
       <div className="absolute bottom-20 right-12 z-50">
         <MapZoomControl map={map} />
@@ -70,7 +85,8 @@ export default function MarsMap() {
         landmark={sidebarLandmark}
         onClose={() => setSidebarLandmark(null)}
       />
-      {/* <MapStatus status={status} /> */}
-    </div>
+        {/* <MapStatus status={status} /> */}
+      </div>
+    </MotionConfig>
   );
 }

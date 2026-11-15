@@ -16,7 +16,8 @@ import type { EventsKey } from "ol/events.js";
 import {
   JEZERO_CENTER,
   JEZERO_ZOOM,
-  MAP_LAYERS,
+  GLOBAL_MAP_LAYERS,
+  REGIONAL_MAP_LAYERS,
   type MapLayerConfig,
 } from "./mapLayers";
 import {
@@ -32,6 +33,17 @@ import {
 } from "./missionDataLayers";
 
 const GLOBAL_MARS_LAYER_INDEX = 1;
+
+export type RegionalMapLayerVisibility = Record<string, boolean>;
+
+function createInitialRegionalMapLayerVisibility(): RegionalMapLayerVisibility {
+  return Object.fromEntries(
+    REGIONAL_MAP_LAYERS.map(({ id, visibleByDefault }) => [
+      id,
+      visibleByDefault,
+    ]),
+  );
+}
 
 export type CursorCoordinates = {
   latitude: number;
@@ -99,16 +111,26 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
   const missionDataLayersRef = useRef(
     new Map<string, VectorLayer<VectorSource>>(),
   );
+  const regionalMapLayersRef = useRef(
+    new Map<string, TileLayer<WMTS>>(),
+  );
+  const regionalLayerMaxZoomRef = useRef(new Map<string, number>());
   const missionDataLayerVisibilityRef = useRef(
     createInitialMissionDataLayerVisibility(),
   );
+  const regionalMapLayerVisibilityRef = useRef(
+    createInitialRegionalMapLayerVisibility(),
+  );
 
   const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
+  const [regionalMapLayerVisibility, setRegionalMapLayerVisibility] = useState(
+    createInitialRegionalMapLayerVisibility,
+  );
   const [missionDataLayerVisibility, setMissionDataLayerVisibility] = useState(
     createInitialMissionDataLayerVisibility,
   );
   const [status, setStatus] = useState(
-    `Loading ${MAP_LAYERS[0].name} imagery...`,
+    `Loading ${GLOBAL_MAP_LAYERS[0].name} imagery...`,
   );
   const [map, setMap] = useState<OLMap | null>(null);
   const [landmarkLayer, setLandmarkLayer] =
@@ -117,13 +139,44 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
     useState<CursorCoordinates | null>(null);
 
   const onLayerChange = useCallback((index: number) => {
-    const layerConfig = MAP_LAYERS[index];
+    const layerConfig = GLOBAL_MAP_LAYERS[index];
     if (!layerConfig) return;
 
     selectedLayerIndexRef.current = index;
     setStatus(`Loading ${layerConfig.name} imagery...`);
     setSelectedLayerIndex(index);
   }, []);
+
+  const onRegionalMapLayerVisibilityChange = useCallback(
+    (id: string, visible: boolean) => {
+      const layerConfig = REGIONAL_MAP_LAYERS.find((layer) => layer.id === id);
+      if (!layerConfig) return;
+
+      regionalMapLayerVisibilityRef.current = {
+        ...regionalMapLayerVisibilityRef.current,
+        [id]: visible,
+      };
+      const layer = regionalMapLayersRef.current.get(id);
+      layer?.setVisible(visible);
+
+      const activeMap = mapInstance.current;
+      if (activeMap) {
+        const regionalMaxZooms = Object.entries(
+          regionalMapLayerVisibilityRef.current,
+        )
+          .filter((entry) => entry[1])
+          .map(
+            ([layerId]) => regionalLayerMaxZoomRef.current.get(layerId) ?? 0,
+          );
+        activeMap
+          .getView()
+          .setMaxZoom(Math.max(globalMaxZoom.current, ...regionalMaxZooms));
+      }
+
+      setRegionalMapLayerVisibility(regionalMapLayerVisibilityRef.current);
+    },
+    [],
+  );
 
   const onMissionDataLayerVisibilityChange = useCallback(
     (id: string, visible: boolean) => {
@@ -140,7 +193,7 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
-    const layerConfig = MAP_LAYERS[selectedLayerIndex];
+    const layerConfig = GLOBAL_MAP_LAYERS[selectedLayerIndex];
 
     async function loadLayer(): Promise<void> {
       try {
@@ -187,12 +240,21 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
         }
 
         const [globalImage, selectedImage, missionDataLayers] = await Promise.all([
-          loadWmtsLayer(MAP_LAYERS[GLOBAL_MARS_LAYER_INDEX], controller.signal),
+          loadWmtsLayer(
+            GLOBAL_MAP_LAYERS[GLOBAL_MARS_LAYER_INDEX],
+            controller.signal,
+          ),
           selectedLayerIndex === GLOBAL_MARS_LAYER_INDEX
             ? Promise.resolve(null)
             : loadWmtsLayer(layerConfig, controller.signal),
           createMissionDataLayers(controller.signal),
         ]);
+        const regionalImages = await Promise.all(
+          REGIONAL_MAP_LAYERS.map(async (regionalConfig) => ({
+            config: regionalConfig,
+            image: await loadWmtsLayer(regionalConfig, controller.signal),
+          })),
+        );
 
         if (cancelled || !mapElement.current) return;
 
@@ -214,7 +276,9 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
         );
         const globalTileLoadKey = globalImage.source.on("tileloadend", () => {
           if (selectedLayerIndexRef.current === GLOBAL_MARS_LAYER_INDEX) {
-            setStatus(`${MAP_LAYERS[GLOBAL_MARS_LAYER_INDEX].name} loaded.`);
+            setStatus(
+              `${GLOBAL_MAP_LAYERS[GLOBAL_MARS_LAYER_INDEX].name} loaded.`,
+            );
           }
         });
         globalSourceKeys.current = [globalTileErrorKey, globalTileLoadKey];
@@ -245,6 +309,22 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
               ? globalTileCount - 1
               : (selectedImage?.resolutions.length ?? globalTileCount) - 1,
         });
+        const regionalMapLayers = new Map(
+          regionalImages.map(({ config, image }) => {
+            const layer = new TileLayer({
+              source: image.source,
+              visible:
+                regionalMapLayerVisibilityRef.current[config.id] ??
+                config.visibleByDefault,
+              properties: { title: config.name },
+            });
+            regionalLayerMaxZoomRef.current.set(
+              config.id,
+              image.resolutions.length - 1,
+            );
+            return [config.id, layer] as const;
+          }),
+        );
         const landmarkLayer = createLandmarkLayer();
         for (const [id, layer] of missionDataLayers) {
           layer.setVisible(
@@ -256,6 +336,7 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
           layers: [
             baseLayer,
             nextImageryLayer,
+            ...regionalMapLayers.values(),
             ...missionDataLayers.values(),
             landmarkLayer,
           ],
@@ -272,12 +353,14 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
         globalLayer.current = baseLayer;
         imageryLayer.current = nextImageryLayer;
         missionDataLayersRef.current = missionDataLayers;
+        regionalMapLayersRef.current = regionalMapLayers;
         mapInstance.current = map;
         setMap(map);
         setLandmarkLayer(landmarkLayer);
         (
           globalThis as typeof globalThis & { marsMapDebug?: OLMap }
         ).marsMapDebug = map;
+        setRegionalMapLayerVisibility(regionalMapLayerVisibilityRef.current);
         setStatus(`Map ready; loading ${layerConfig.name}...`);
       } catch (error) {
         if (
@@ -314,6 +397,8 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
       imageryLayer.current = null;
       globalLayer.current = null;
       missionDataLayersRef.current.clear();
+      regionalMapLayersRef.current.clear();
+      regionalLayerMaxZoomRef.current.clear();
       globalMaxZoom.current = 0;
     },
     [],
@@ -323,9 +408,11 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
     cursorCoordinates,
     landmarkLayer,
     missionDataLayerVisibility,
+    onRegionalMapLayerVisibilityChange,
     map,
     onLayerChange,
     onMissionDataLayerVisibilityChange,
+    regionalMapLayerVisibility,
     selectedLayerIndex,
     status,
   };

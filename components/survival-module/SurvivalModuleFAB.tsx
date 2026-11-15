@@ -1,7 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { AnimatePresence, motion } from "motion/react";
 import {
   ArrowLeft,
   BookText,
@@ -15,13 +23,12 @@ import type OLMap from "ol/Map.js";
 
 import { LANDMARK_CATALOG } from "../map/landmarks/landmarkCatalog";
 import type { MarsLandmark } from "../map/landmarks/landmarkTypes";
-import { MAP_LAYERS } from "../map/mapLayers";
+import { GLOBAL_MAP_LAYERS, REGIONAL_MAP_LAYERS } from "../map/mapLayers";
 import {
   GUIDE_ARTICLES,
   GUIDE_CATEGORIES,
   HAZARD_CARDS,
   MARS_MISSIONS,
-  SURVIVAL_MODULE_INTRO,
   SURVIVAL_MODULE_TITLE,
 } from "./SurvivalModuleContent";
 import type { GuideArticle } from "./SurvivalModuleContent";
@@ -30,10 +37,12 @@ const FOCUSABLE_SELECTOR =
   'button:not([disabled]), input:not([disabled]), a[href], summary, [tabindex]:not([tabindex="-1"])';
 
 type ModuleView = "browse" | "hazards" | "article";
+type MarsMission = (typeof MARS_MISSIONS)[number];
 
 type SurvivalModuleFABProps = {
   map?: OLMap | null;
   onLayerChange?: (index: number) => void;
+  onRegionalLayerVisibilityChange?: (id: string, visible: boolean) => void;
 };
 
 function BulletSection({
@@ -54,6 +63,68 @@ function BulletSection({
         ))}
       </ul>
     </section>
+  );
+}
+
+function MissionRecord({ mission }: { mission: MarsMission }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const panelId = useId();
+
+  return (
+    <article className="border border-orange-500/25 bg-black/30">
+      <button
+        type="button"
+        className="w-full cursor-pointer p-4 text-left focus-visible:outline-2 focus-visible:outline-orange-400"
+        aria-expanded={isExpanded}
+        aria-controls={panelId}
+        onClick={() => setIsExpanded((expanded) => !expanded)}
+      >
+        <span className="block text-xs uppercase tracking-wider text-orange-500">
+          {mission.missionType}
+        </span>
+        <span className="mt-1 block font-semibold text-orange-200">
+          {mission.name}
+        </span>
+        <span className="mt-1 block text-xs text-orange-100/55">
+          {mission.dates}
+        </span>
+      </button>
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            id={panelId}
+            className="overflow-hidden"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+          >
+            <div className="space-y-3 border-t border-orange-500/15 p-4 text-sm leading-6 text-orange-100/75">
+              <p>
+                <strong className="text-orange-200">Objectives:</strong>{" "}
+                {mission.objectives}
+              </p>
+              <p>
+                <strong className="text-orange-200">Achievements:</strong>{" "}
+                {mission.achievements}
+              </p>
+              <p>
+                <strong className="text-orange-200">Technology:</strong>{" "}
+                {mission.technology}
+              </p>
+              <p>
+                <strong className="text-orange-200">Limitations:</strong>{" "}
+                {mission.limitations}
+              </p>
+              <p>
+                <strong className="text-orange-200">Exploration lesson:</strong>{" "}
+                {mission.explorationLesson}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </article>
   );
 }
 
@@ -81,6 +152,7 @@ function getArticleSearchText(article: GuideArticle): string {
 export default function SurvivalModuleFAB({
   map = null,
   onLayerChange,
+  onRegionalLayerVisibilityChange,
 }: SurvivalModuleFABProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<ModuleView>("browse");
@@ -194,10 +266,22 @@ export default function SurvivalModuleFAB({
 
   const handleLayerClick = useCallback(
     (layerId: string) => {
-      const index = MAP_LAYERS.findIndex(({ id }) => id === layerId);
-      if (index >= 0) onLayerChange?.(index);
+      const globalIndex = GLOBAL_MAP_LAYERS.findIndex(
+        ({ id }) => id === layerId,
+      );
+      if (globalIndex >= 0) {
+        onLayerChange?.(globalIndex);
+        return;
+      }
+
+      const regionalLayer = REGIONAL_MAP_LAYERS.find(
+        ({ id }) => id === layerId,
+      );
+      if (regionalLayer) {
+        onRegionalLayerVisibilityChange?.(regionalLayer.id, true);
+      }
     },
-    [onLayerChange],
+    [onLayerChange, onRegionalLayerVisibilityChange],
   );
 
   const articleLandmarks = selectedArticle?.relatedLandmarks
@@ -226,22 +310,31 @@ export default function SurvivalModuleFAB({
         <span className="sr-only">Survival module</span>
       </button>
 
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-100 flex items-center justify-center bg-black/85 p-2 backdrop-blur-sm sm:p-5"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) closeModule();
-          }}
-        >
-          <div
-            ref={dialogRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="survival-module-title"
-            aria-describedby="survival-module-intro"
-            tabIndex={-1}
-            className="relative flex max-h-[96dvh] w-full max-w-6xl flex-col overflow-hidden border border-orange-500/50 bg-[#090909] text-orange-100 shadow-2xl shadow-black sm:max-h-[92dvh]"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 z-100 flex items-center justify-center bg-black/85 p-2 backdrop-blur-sm sm:p-5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) closeModule();
+            }}
           >
+            <motion.div
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="survival-module-title"
+              aria-describedby="survival-module-intro"
+              tabIndex={-1}
+              className="relative flex max-h-[96dvh] w-full max-w-6xl flex-col overflow-hidden border border-orange-500/50 bg-[#090909] text-orange-100 shadow-2xl shadow-black sm:max-h-[92dvh]"
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.98 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+            >
             <header className="flex shrink-0 items-start justify-between gap-4 border-b border-orange-500/30 bg-[#090909] px-4 py-4 sm:px-6">
               <div>
                 <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-orange-500">
@@ -520,54 +613,10 @@ export default function SurvivalModuleFAB({
                           </div>
                           <div className="space-y-3">
                             {MARS_MISSIONS.map((mission) => (
-                              <details
+                              <MissionRecord
                                 key={mission.name}
-                                className="group border border-orange-500/25 bg-black/30"
-                              >
-                                <summary className="cursor-pointer list-none p-4 focus-visible:outline-2 focus-visible:outline-orange-400 [&::-webkit-details-marker]:hidden">
-                                  <span className="block text-xs uppercase tracking-wider text-orange-500">
-                                    {mission.missionType}
-                                  </span>
-                                  <span className="mt-1 block font-semibold text-orange-200">
-                                    {mission.name}
-                                  </span>
-                                  <span className="mt-1 block text-xs text-orange-100/55">
-                                    {mission.dates}
-                                  </span>
-                                </summary>
-                                <div className="space-y-3 border-t border-orange-500/15 p-4 text-sm leading-6 text-orange-100/75">
-                                  <p>
-                                    <strong className="text-orange-200">
-                                      Objectives:
-                                    </strong>{" "}
-                                    {mission.objectives}
-                                  </p>
-                                  <p>
-                                    <strong className="text-orange-200">
-                                      Achievements:
-                                    </strong>{" "}
-                                    {mission.achievements}
-                                  </p>
-                                  <p>
-                                    <strong className="text-orange-200">
-                                      Technology:
-                                    </strong>{" "}
-                                    {mission.technology}
-                                  </p>
-                                  <p>
-                                    <strong className="text-orange-200">
-                                      Limitations:
-                                    </strong>{" "}
-                                    {mission.limitations}
-                                  </p>
-                                  <p>
-                                    <strong className="text-orange-200">
-                                      Exploration lesson:
-                                    </strong>{" "}
-                                    {mission.explorationLesson}
-                                  </p>
-                                </div>
-                              </details>
+                                mission={mission}
+                              />
                             ))}
                           </div>
                         </section>
@@ -593,7 +642,11 @@ export default function SurvivalModuleFAB({
                                     {isAvailable ? (
                                       <button
                                         type="button"
-                                        disabled={!map || !onLayerChange}
+                                        disabled={
+                                          !map ||
+                                          (!onLayerChange &&
+                                            !onRegionalLayerVisibilityChange)
+                                        }
                                         onClick={() =>
                                           layerId && handleLayerClick(layerId)
                                         }
@@ -746,9 +799,10 @@ export default function SurvivalModuleFAB({
                 </button>
               )}
             </footer>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -10,6 +10,28 @@ Instead of simply displaying a map, it tells astronauts what is around them, wha
 
 Demo: https://martian-map-eight.vercel.app/
 
+## Features
+
+### Ration and time estimator
+
+The tool estimates **route time** and **food mass per person** from the distance you draw and the two values you enter.
+
+1. **Route distance:** The map calculates the Mars-surface distance between each pair of points along your drawn line, then adds those distances together. It uses Mars’s ellipsoid rather than treating the map as a flat surface. This measures the drawn route’s length, but doesn’t account for elevation, terrain, or obstacles. See `calculateMarsDistance`.
+
+2. **Estimated sols:**  
+   `route distance in km ÷ your planned km per sol`  
+   For example, a 12 km route at 3 km/sol gives `12 ÷ 3 = 4 sols`.
+
+3. **Earth-time equivalent:**  
+   `estimated sols × 1.0275 Earth days`  
+   One sol is about **24 hours, 39 minutes, 35 seconds**, or **1.0275 Earth days**. So 4 sols is about 4.11 Earth days.
+
+4. **Estimated food per person:**  
+   `estimated sols × your food allowance in kg per person per sol`  
+   For example, at 0.8 kg/person/sol for 4 sols, the estimate is `4 × 0.8 = 3.2 kg per person`.
+
+The inputs must be positive numbers. Results are rounded to two decimal places for display. These are simple planning estimates—not mission-ready travel predictions, packing requirements, or nutrition guidance. They don’t account for rest, terrain, EVA constraints, or delays. The formulas and sol conversion are in `MapDistanceControl.tsx`.
+
 ## Tech stack used
 
 - Next.js
@@ -42,10 +64,10 @@ Demo: https://martian-map-eight.vercel.app/
 - [x] clickable landmarks, which opens a popup and displays informations
 - [x] Rover traverse path?
 - [x] Distance calculator
-- [ ] Add estimated travel time and food consumption for distance calculator
+- [x] Add estimated travel time and food consumption for distance calculator
 - [ ] add more map layers
 
-## Would be nice to have
+## Would be nice to have (IF I HAD THE TIME ASAFOSAJFO)
 
 - [ ] AI chatbot
 - [ ] All landmarks on global mars

@@ -22,14 +22,26 @@ export function useLandmarkPopup(
 ) {
   const overlay = useRef<Overlay | null>(null);
   const hoverKey = useRef<EventsKey | undefined>(undefined);
+  const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hidePositionTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [selectedLandmark, setSelectedLandmark] =
     useState<MarsLandmark | null>(null);
   const selectedLandmarkRef = useRef<MarsLandmark | null>(null);
 
   const closePopup = useCallback(() => {
-    overlay.current?.setPosition(undefined);
+    if (hideTimeout.current) {
+      clearTimeout(hideTimeout.current);
+      hideTimeout.current = null;
+    }
+    if (hidePositionTimeout.current) {
+      clearTimeout(hidePositionTimeout.current);
+    }
     selectedLandmarkRef.current = null;
     setSelectedLandmark(null);
+    hidePositionTimeout.current = setTimeout(() => {
+      overlay.current?.setPosition(undefined);
+      hidePositionTimeout.current = null;
+    }, 180);
   }, []);
 
   useEffect(() => {
@@ -50,23 +62,28 @@ export function useLandmarkPopup(
         margin: 24,
       },
     });
-    let hideTimeout: ReturnType<typeof setTimeout> | null = null;
-
     function cancelHide(): void {
-      if (hideTimeout) {
-        clearTimeout(hideTimeout);
-        hideTimeout = null;
+      if (hideTimeout.current) {
+        clearTimeout(hideTimeout.current);
+        hideTimeout.current = null;
+      }
+      if (hidePositionTimeout.current) {
+        clearTimeout(hidePositionTimeout.current);
+        hidePositionTimeout.current = null;
       }
     }
 
     function scheduleHide(): void {
-      if (hideTimeout) return;
+      if (hideTimeout.current || hidePositionTimeout.current) return;
 
-      hideTimeout = setTimeout(() => {
-        hideTimeout = null;
-        landmarkOverlay.setPosition(undefined);
+      hideTimeout.current = setTimeout(() => {
+        hideTimeout.current = null;
         selectedLandmarkRef.current = null;
         setSelectedLandmark(null);
+        hidePositionTimeout.current = setTimeout(() => {
+          landmarkOverlay.setPosition(undefined);
+          hidePositionTimeout.current = null;
+        }, 180);
       }, 120);
     }
 

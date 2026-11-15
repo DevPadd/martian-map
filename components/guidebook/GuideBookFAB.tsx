@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Galaxy, Info } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import {
   GUIDEBOOK_INTRO,
   GUIDEBOOK_SECTIONS,
@@ -76,22 +77,31 @@ export default function GuideBookFAB() {
         <Info />
       </button>
 
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) closeGuide();
-          }}
-        >
-          <div
-            ref={dialogRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="guidebook-title"
-            aria-describedby="guidebook-intro"
-            tabIndex={-1}
-            className="relative max-h-[min(88dvh,52rem)] w-full max-w-3xl overflow-y-auto border border-orange-500/50 bg-[#090909] text-orange-100 shadow-2xl shadow-black"
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) closeGuide();
+            }}
           >
+            <motion.div
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="guidebook-title"
+              aria-describedby="guidebook-intro"
+              tabIndex={-1}
+              className="relative max-h-[min(88dvh,52rem)] w-full max-w-3xl overflow-y-auto border border-orange-500/50 bg-[#090909] text-orange-100 shadow-2xl shadow-black"
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.98 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+            >
             <div className="sticky top-0 z-10 flex items-start justify-between gap-6 border-b border-orange-500/30 bg-[#090909]/95 px-6 py-5 backdrop-blur">
               <div className="flex items-center gap-3 text-orange-500">
                 <Galaxy className="h-10 w-10" />
@@ -142,9 +152,10 @@ export default function GuideBookFAB() {
                 </section>
               ))}
             </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

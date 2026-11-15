@@ -1,6 +1,7 @@
 "use client";
 
 import type { RefObject } from "react";
+import { AnimatePresence, motion } from "motion/react";
 
 import type { MarsLandmark } from "./landmarkTypes";
 
@@ -24,8 +25,16 @@ export default function LandmarkPopup({
       role="dialog"
       aria-label={landmark ? `${landmark.name} details` : undefined}
     >
-      {landmark && (
-        <article className="w-72 border border-orange-500/50 bg-black/90 p-4 text-sm text-orange-100 shadow-xl">
+      <AnimatePresence>
+        {landmark && (
+          <motion.article
+            key={landmark.id}
+            className="w-72 border border-orange-500/50 bg-black/90 p-4 text-sm text-orange-100 shadow-xl"
+            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 5, scale: 0.97 }}
+            transition={{ duration: 0.16, ease: "easeOut" }}
+          >
           <div className="mb-2 flex items-start justify-between gap-3">
             <div>
               <p className="text-xs uppercase tracking-wider text-orange-400">
@@ -56,8 +65,9 @@ export default function LandmarkPopup({
           >
             See more
           </button>
-        </article>
-      )}
+          </motion.article>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

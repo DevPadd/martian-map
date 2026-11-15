@@ -31,5 +31,11 @@ export const MAP_LAYERS = [
   },
 ] as const satisfies readonly MapLayerConfig[];
 
+export const GLOBAL_MAP_LAYERS = MAP_LAYERS.slice(0, 2);
+export const REGIONAL_MAP_LAYERS = MAP_LAYERS.slice(2).map((layer) => ({
+  ...layer,
+  visibleByDefault: false,
+}));
+
 export const JEZERO_CENTER: [number, number] = [77.3835, 18.4836];
 export const JEZERO_ZOOM = 5;
