@@ -48,9 +48,7 @@ export default function RegionalMapLayersControl({
                   >
                     <input
                       type="checkbox"
-                      checked={
-                        visibility[layer.id] ?? layer.visibleByDefault
-                      }
+                      checked={visibility[layer.id] ?? layer.visibleByDefault}
                       onChange={(event) =>
                         onVisibilityChange(layer.id, event.target.checked)
                       }
@@ -59,10 +57,6 @@ export default function RegionalMapLayersControl({
                   </label>
                 ))}
               </div>
-              <p className="mt-3 border-t border-orange-500/20 pt-2 text-[0.65rem] text-orange-200/60">
-                Regional imagery is drawn over the selected global basemap
-                where coverage exists.
-              </p>
             </div>
           </motion.div>
         )}

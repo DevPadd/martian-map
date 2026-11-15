@@ -16,6 +16,7 @@ import type { EventsKey } from "ol/events.js";
 import {
   JEZERO_CENTER,
   JEZERO_ZOOM,
+  ENVIRONMENT_LAYERS,
   GLOBAL_MAP_LAYERS,
   REGIONAL_MAP_LAYERS,
   type MapLayerConfig,
@@ -35,10 +36,20 @@ import {
 const GLOBAL_MARS_LAYER_INDEX = 1;
 
 export type RegionalMapLayerVisibility = Record<string, boolean>;
+export type EnvironmentMapLayerVisibility = Record<string, boolean>;
 
 function createInitialRegionalMapLayerVisibility(): RegionalMapLayerVisibility {
   return Object.fromEntries(
     REGIONAL_MAP_LAYERS.map(({ id, visibleByDefault }) => [
+      id,
+      visibleByDefault,
+    ]),
+  );
+}
+
+function createInitialEnvironmentMapLayerVisibility(): EnvironmentMapLayerVisibility {
+  return Object.fromEntries(
+    ENVIRONMENT_LAYERS.map(({ id, visibleByDefault }) => [
       id,
       visibleByDefault,
     ]),
@@ -114,18 +125,27 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
   const regionalMapLayersRef = useRef(
     new Map<string, TileLayer<WMTS>>(),
   );
+  const environmentMapLayersRef = useRef(
+    new Map<string, TileLayer<WMTS>>(),
+  );
   const regionalLayerMaxZoomRef = useRef(new Map<string, number>());
+  const environmentLayerMaxZoomRef = useRef(new Map<string, number>());
   const missionDataLayerVisibilityRef = useRef(
     createInitialMissionDataLayerVisibility(),
   );
   const regionalMapLayerVisibilityRef = useRef(
     createInitialRegionalMapLayerVisibility(),
   );
+  const environmentMapLayerVisibilityRef = useRef(
+    createInitialEnvironmentMapLayerVisibility(),
+  );
 
   const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
   const [regionalMapLayerVisibility, setRegionalMapLayerVisibility] = useState(
     createInitialRegionalMapLayerVisibility,
   );
+  const [environmentMapLayerVisibility, setEnvironmentMapLayerVisibility] =
+    useState(createInitialEnvironmentMapLayerVisibility);
   const [missionDataLayerVisibility, setMissionDataLayerVisibility] = useState(
     createInitialMissionDataLayerVisibility,
   );
@@ -168,12 +188,72 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
           .map(
             ([layerId]) => regionalLayerMaxZoomRef.current.get(layerId) ?? 0,
           );
+        const environmentMaxZooms = Object.entries(
+          environmentMapLayerVisibilityRef.current,
+        )
+          .filter((entry) => entry[1])
+          .map(
+            ([layerId]) =>
+              environmentLayerMaxZoomRef.current.get(layerId) ?? 0,
+          );
         activeMap
           .getView()
-          .setMaxZoom(Math.max(globalMaxZoom.current, ...regionalMaxZooms));
+          .setMaxZoom(
+            Math.max(
+              globalMaxZoom.current,
+              ...regionalMaxZooms,
+              ...environmentMaxZooms,
+            ),
+          );
       }
 
       setRegionalMapLayerVisibility(regionalMapLayerVisibilityRef.current);
+    },
+    [],
+  );
+
+  const onEnvironmentMapLayerVisibilityChange = useCallback(
+    (id: string, visible: boolean) => {
+      const layerConfig = ENVIRONMENT_LAYERS.find((layer) => layer.id === id);
+      if (!layerConfig) return;
+
+      environmentMapLayerVisibilityRef.current = {
+        ...environmentMapLayerVisibilityRef.current,
+        [id]: visible,
+      };
+      environmentMapLayersRef.current.get(id)?.setVisible(visible);
+
+      const activeMap = mapInstance.current;
+      if (activeMap) {
+        const regionalMaxZooms = Object.entries(
+          regionalMapLayerVisibilityRef.current,
+        )
+          .filter((entry) => entry[1])
+          .map(
+            ([layerId]) => regionalLayerMaxZoomRef.current.get(layerId) ?? 0,
+          );
+        const environmentMaxZooms = Object.entries(
+          environmentMapLayerVisibilityRef.current,
+        )
+          .filter((entry) => entry[1])
+          .map(
+            ([layerId]) =>
+              environmentLayerMaxZoomRef.current.get(layerId) ?? 0,
+          );
+        activeMap
+          .getView()
+          .setMaxZoom(
+            Math.max(
+              globalMaxZoom.current,
+              ...regionalMaxZooms,
+              ...environmentMaxZooms,
+            ),
+          );
+      }
+
+      setEnvironmentMapLayerVisibility(
+        environmentMapLayerVisibilityRef.current,
+      );
     },
     [],
   );
@@ -249,12 +329,20 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
             : loadWmtsLayer(layerConfig, controller.signal),
           createMissionDataLayers(controller.signal),
         ]);
-        const regionalImages = await Promise.all(
-          REGIONAL_MAP_LAYERS.map(async (regionalConfig) => ({
-            config: regionalConfig,
-            image: await loadWmtsLayer(regionalConfig, controller.signal),
-          })),
-        );
+        const [regionalImages, environmentImages] = await Promise.all([
+          Promise.all(
+            REGIONAL_MAP_LAYERS.map(async (regionalConfig) => ({
+              config: regionalConfig,
+              image: await loadWmtsLayer(regionalConfig, controller.signal),
+            })),
+          ),
+          Promise.all(
+            ENVIRONMENT_LAYERS.map(async (environmentConfig) => ({
+              config: environmentConfig,
+              image: await loadWmtsLayer(environmentConfig, controller.signal),
+            })),
+          ),
+        ]);
 
         if (cancelled || !mapElement.current) return;
 
@@ -325,6 +413,44 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
             return [config.id, layer] as const;
           }),
         );
+        const environmentMapLayers = new Map(
+          environmentImages.map(({ config, image }) => {
+            const layer = new TileLayer({
+              source: image.source,
+              visible:
+                environmentMapLayerVisibilityRef.current[config.id] ??
+                config.visibleByDefault,
+              properties: { title: config.name },
+            });
+            environmentLayerMaxZoomRef.current.set(
+              config.id,
+              image.resolutions.length - 1,
+            );
+            return [config.id, layer] as const;
+          }),
+        );
+        const visibleOverlayMaxZooms = [
+          ...Object.entries(regionalMapLayerVisibilityRef.current).flatMap(
+            ([id, visible]) => {
+              return visible
+                ? [regionalLayerMaxZoomRef.current.get(id) ?? 0]
+                : [];
+            },
+          ),
+          ...Object.entries(environmentMapLayerVisibilityRef.current).flatMap(
+            ([id, visible]) => {
+              return visible
+                ? [environmentLayerMaxZoomRef.current.get(id) ?? 0]
+                : [];
+            },
+          ),
+        ];
+        view.setMaxZoom(
+          Math.max(
+            view.getMaxZoom() ?? globalMaxZoom.current,
+            ...visibleOverlayMaxZooms,
+          ),
+        );
         const landmarkLayer = createLandmarkLayer();
         for (const [id, layer] of missionDataLayers) {
           layer.setVisible(
@@ -337,6 +463,7 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
             baseLayer,
             nextImageryLayer,
             ...regionalMapLayers.values(),
+            ...environmentMapLayers.values(),
             ...missionDataLayers.values(),
             landmarkLayer,
           ],
@@ -354,6 +481,7 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
         imageryLayer.current = nextImageryLayer;
         missionDataLayersRef.current = missionDataLayers;
         regionalMapLayersRef.current = regionalMapLayers;
+        environmentMapLayersRef.current = environmentMapLayers;
         mapInstance.current = map;
         setMap(map);
         setLandmarkLayer(landmarkLayer);
@@ -361,6 +489,9 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
           globalThis as typeof globalThis & { marsMapDebug?: OLMap }
         ).marsMapDebug = map;
         setRegionalMapLayerVisibility(regionalMapLayerVisibilityRef.current);
+        setEnvironmentMapLayerVisibility(
+          environmentMapLayerVisibilityRef.current,
+        );
         setStatus(`Map ready; loading ${layerConfig.name}...`);
       } catch (error) {
         if (
@@ -398,7 +529,9 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
       globalLayer.current = null;
       missionDataLayersRef.current.clear();
       regionalMapLayersRef.current.clear();
+      environmentMapLayersRef.current.clear();
       regionalLayerMaxZoomRef.current.clear();
+      environmentLayerMaxZoomRef.current.clear();
       globalMaxZoom.current = 0;
     },
     [],
@@ -413,6 +546,8 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
     onLayerChange,
     onMissionDataLayerVisibilityChange,
     regionalMapLayerVisibility,
+    environmentMapLayerVisibility,
+    onEnvironmentMapLayerVisibilityChange,
     selectedLayerIndex,
     status,
   };

@@ -69,7 +69,10 @@ The inputs must be positive numbers. Results are rounded to two decimal places f
 
 ## Would be nice to have (IF I HAD THE TIME ASAFOSAJFO)
 
-- [ ] AI chatbot
+- [ ] add sound effect and sound
+- [ ] use custom cursor
+- [ ] add evangelion-like screen overlay
+- [ ] AI chatbot (magi lol)
 - [ ] All landmarks on global mars
 - [ ] Add feature that allows user to add their own checkpoint/landmark
 

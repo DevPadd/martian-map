@@ -6,6 +6,7 @@ import { MotionConfig } from "motion/react";
 import SurvivalModuleFAB from "./survival-module/SurvivalModuleFAB";
 import MapToolbar from "./map/MapToolbar";
 import GeoJSONLayersControl from "./map/GeoJSONLayersControl";
+import EnvironmentMapLayersControl from "./map/EnvironmentMapLayersControl";
 import RegionalMapLayersControl from "./map/RegionalMapLayersControl";
 import MapScaleControl from "./map/MapScaleControl";
 import MapZoomControl from "./map/MapZoomControl";
@@ -25,8 +26,10 @@ export default function MarsMap() {
   );
   const {
     cursorCoordinates,
+    environmentMapLayerVisibility,
     landmarkLayer,
     map,
+    onEnvironmentMapLayerVisibilityChange,
     onLayerChange,
     onMissionDataLayerVisibilityChange,
     onRegionalMapLayerVisibilityChange,
@@ -58,12 +61,19 @@ export default function MarsMap() {
           visibility={regionalMapLayerVisibility}
           onVisibilityChange={onRegionalMapLayerVisibilityChange}
         />
+        <EnvironmentMapLayersControl
+          visibility={environmentMapLayerVisibility}
+          onVisibilityChange={onEnvironmentMapLayerVisibilityChange}
+        />
       </div>
 
       <SurvivalModuleFAB
         map={map}
         onLayerChange={onLayerChange}
         onRegionalLayerVisibilityChange={onRegionalMapLayerVisibilityChange}
+        onEnvironmentLayerVisibilityChange={
+          onEnvironmentMapLayerVisibilityChange
+        }
       />
       <GuideBookFAB />
       <div className="absolute bottom-20 right-12 z-50">

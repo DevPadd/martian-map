@@ -9,14 +9,14 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata = {
   title: {
-    template: "M.A.R.S Interactive Map",
-    default: "M.A.R.S Interactive Map",
+    template: "B.C.I. Interactive Map",
+    default: "B.C.I. Interactive Map",
   },
   description: "Welcome to my Next.js application.",
   openGraph: {
-    title: "M.A.R.S Interactive Map",
-    description: "Welcome to my Next.js application.",
-    siteName: "M.A.R.S Interactive Map",
+    title: "B.C.I. Interactive Map",
+    description: "Beyond-Extraterrestrial Interactive Map",
+    siteName: "B.C.I. Interactive Map",
     type: "website",
   },
 };

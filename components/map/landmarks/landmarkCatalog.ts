@@ -48,8 +48,7 @@ export const LANDMARK_CATALOG: MarsLandmark[] = [
     name: "Olympus Mons",
     category: "mountain",
     coordinates: [-133.8, 18.65],
-    description:
-      "The largest known volcano in the Solar System. Longitude is represented in the map's -180 to 180 degree range.",
+    description: "The largest known volcano in the Solar System.",
     details:
       "Olympus Mons is a giant shield volcano in the Tharsis region. It rises nearly 22 kilometers above the surrounding plains and spans hundreds of kilometers. Its broad profile was built by repeated eruptions of low-viscosity lava, while a prominent escarpment marks much of its outer margin. The marker gives an approximate position for the volcano.",
     images: [],

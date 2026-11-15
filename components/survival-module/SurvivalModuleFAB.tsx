@@ -23,7 +23,11 @@ import type OLMap from "ol/Map.js";
 
 import { LANDMARK_CATALOG } from "../map/landmarks/landmarkCatalog";
 import type { MarsLandmark } from "../map/landmarks/landmarkTypes";
-import { GLOBAL_MAP_LAYERS, REGIONAL_MAP_LAYERS } from "../map/mapLayers";
+import {
+  ENVIRONMENT_LAYERS,
+  GLOBAL_MAP_LAYERS,
+  REGIONAL_MAP_LAYERS,
+} from "../map/mapLayers";
 import {
   GUIDE_ARTICLES,
   GUIDE_CATEGORIES,
@@ -43,6 +47,7 @@ type SurvivalModuleFABProps = {
   map?: OLMap | null;
   onLayerChange?: (index: number) => void;
   onRegionalLayerVisibilityChange?: (id: string, visible: boolean) => void;
+  onEnvironmentLayerVisibilityChange?: (id: string, visible: boolean) => void;
 };
 
 function BulletSection({
@@ -143,7 +148,6 @@ function getArticleSearchText(article: GuideArticle): string {
     ...article.keyInformation,
     ...(article.potentialRisks ?? []),
     ...(article.whatToMonitor ?? []),
-    ...(article.safetyConsiderations ?? []),
   ]
     .join(" ")
     .toLowerCase();
@@ -153,6 +157,7 @@ export default function SurvivalModuleFAB({
   map = null,
   onLayerChange,
   onRegionalLayerVisibilityChange,
+  onEnvironmentLayerVisibilityChange,
 }: SurvivalModuleFABProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<ModuleView>("browse");
@@ -279,9 +284,21 @@ export default function SurvivalModuleFAB({
       );
       if (regionalLayer) {
         onRegionalLayerVisibilityChange?.(regionalLayer.id, true);
+        return;
+      }
+
+      const environmentLayer = ENVIRONMENT_LAYERS.find(
+        ({ id }) => id === layerId,
+      );
+      if (environmentLayer) {
+        onEnvironmentLayerVisibilityChange?.(environmentLayer.id, true);
       }
     },
-    [onLayerChange, onRegionalLayerVisibilityChange],
+    [
+      onEnvironmentLayerVisibilityChange,
+      onLayerChange,
+      onRegionalLayerVisibilityChange,
+    ],
   );
 
   const articleLandmarks = selectedArticle?.relatedLandmarks
@@ -335,470 +352,440 @@ export default function SurvivalModuleFAB({
               exit={{ opacity: 0, y: 12, scale: 0.98 }}
               transition={{ duration: 0.22, ease: "easeOut" }}
             >
-            <header className="flex shrink-0 items-start justify-between gap-4 border-b border-orange-500/30 bg-[#090909] px-4 py-4 sm:px-6">
-              <div>
-                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-orange-500">
-                  M.A.R.S. · Mission Atlas & Reconnaissance System
-                </p>
-                <h1
-                  id="survival-module-title"
-                  className="mt-1 flex items-center gap-2 text-xl font-bold tracking-wide text-orange-200 sm:text-2xl"
-                >
-                  <BookText
-                    className="h-6 w-6 text-orange-500"
-                    aria-hidden="true"
-                  />
-                  {SURVIVAL_MODULE_TITLE}
-                </h1>
-              </div>
-              <button
-                ref={closeRef}
-                type="button"
-                onClick={closeModule}
-                className="shrink-0 border border-orange-500/40 px-3 py-1 text-2xl leading-7 text-orange-300 transition hover:bg-orange-500/15 focus-visible:outline-2 focus-visible:outline-orange-400"
-                aria-label="Close survival module"
-              >
-                ×
-              </button>
-            </header>
-
-            {view !== "article" && (
-              <nav
-                className="flex shrink-0 gap-2 overflow-x-auto border-b border-orange-500/20 px-4 py-3 sm:px-6"
-                aria-label="Survival module sections"
-              >
-                {(
-                  [
-                    ["browse", "Field guide"],
-                    ["hazards", "Hazard cards"],
-                  ] as const
-                ).map(([id, label]) => (
-                  <button
-                    key={id}
-                    type="button"
-                    onClick={() => setView(id)}
-                    aria-current={view === id ? "page" : undefined}
-                    className={`shrink-0 border px-3 py-2 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-orange-400 ${
-                      view === id
-                        ? "border-orange-400 bg-orange-950/60 text-orange-100"
-                        : "border-orange-500/20 text-orange-300/70 hover:border-orange-400/50 hover:text-orange-100"
-                    }`}
+              <header className="flex shrink-0 items-start justify-between gap-4 border-b border-orange-500/30 bg-[#090909] px-4 py-4 sm:px-6">
+                <div>
+                  <h1
+                    id="survival-module-title"
+                    className="mt-1 flex items-center gap-2 text-xl font-bold tracking-wide text-orange-200 sm:text-2xl"
                   >
-                    {label}
-                  </button>
-                ))}
-              </nav>
-            )}
-
-            <main
-              ref={contentScrollRef}
-              className="min-h-0 flex-1 overflow-y-auto"
-            >
-              {view === "browse" && (
-                <div className="space-y-5 p-4 sm:p-6">
-                  <div className="max-w-3xl space-y-2">
-                    <h2 className="text-lg font-semibold text-orange-200">
-                      Mission field guide
-                    </h2>
-                    <p className="text-sm leading-6 text-orange-100/70">
-                      Browse nine learning areas, or search for a topic, hazard,
-                      landmark, or mission.
-                    </p>
-                  </div>
-
-                  <label className="flex max-w-2xl items-center gap-3 border border-orange-500/30 bg-black/50 px-3 py-2 focus-within:border-orange-400">
-                    <Search
-                      className="h-4 w-4 shrink-0 text-orange-400"
+                    <BookText
+                      className="h-6 w-6 text-orange-500"
                       aria-hidden="true"
                     />
-                    <input
-                      type="search"
-                      value={searchQuery}
-                      onChange={(event) => setSearchQuery(event.target.value)}
-                      placeholder="Search title, topic, or category"
-                      className="min-w-0 flex-1 bg-transparent text-sm text-orange-100 outline-none placeholder:text-orange-100/40"
-                      aria-label="Search survival guide articles"
-                    />
-                  </label>
+                    {SURVIVAL_MODULE_TITLE}
+                  </h1>
+                </div>
+                <button
+                  ref={closeRef}
+                  type="button"
+                  onClick={closeModule}
+                  className="shrink-0 border border-orange-500/40 px-3 py-1 text-2xl leading-7 text-orange-300 transition hover:bg-orange-500/15 focus-visible:outline-2 focus-visible:outline-orange-400"
+                  aria-label="Close survival module"
+                >
+                  ×
+                </button>
+              </header>
 
-                  <div className="flex gap-2 overflow-x-auto pb-1">
+              {view !== "article" && (
+                <nav
+                  className="flex shrink-0 gap-2 overflow-x-auto border-b border-orange-500/20 px-4 py-3 sm:px-6"
+                  aria-label="Survival module sections"
+                >
+                  {(
+                    [
+                      ["browse", "Field guide"],
+                      ["hazards", "Hazard cards"],
+                    ] as const
+                  ).map(([id, label]) => (
                     <button
+                      key={id}
                       type="button"
-                      onClick={() => setCategoryFilter("all")}
-                      aria-pressed={categoryFilter === "all"}
-                      className={`shrink-0 border px-3 py-1.5 text-xs ${
-                        categoryFilter === "all"
-                          ? "border-orange-400 text-orange-100"
-                          : "border-orange-500/20 text-orange-200/60"
+                      onClick={() => setView(id)}
+                      aria-current={view === id ? "page" : undefined}
+                      className={`shrink-0 border px-3 py-2 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-orange-400 ${
+                        view === id
+                          ? "border-orange-400 bg-orange-950/60 text-orange-100"
+                          : "border-orange-500/20 text-orange-300/70 hover:border-orange-400/50 hover:text-orange-100"
                       }`}
                     >
-                      All topics
+                      {label}
                     </button>
-                    {GUIDE_CATEGORIES.map((category) => (
+                  ))}
+                </nav>
+              )}
+
+              <main
+                ref={contentScrollRef}
+                className="min-h-0 flex-1 overflow-y-auto"
+              >
+                {view === "browse" && (
+                  <div className="space-y-5 p-4 sm:p-6">
+                    <label className="flex max-w-2xl items-center gap-3 border border-orange-500/30 bg-black/50 px-3 py-2 focus-within:border-orange-400">
+                      <Search
+                        className="h-4 w-4 shrink-0 text-orange-400"
+                        aria-hidden="true"
+                      />
+                      <input
+                        type="search"
+                        value={searchQuery}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                        placeholder="Search title, topic, or category"
+                        className="min-w-0 flex-1 bg-transparent text-sm text-orange-100 outline-none placeholder:text-orange-100/40"
+                        aria-label="Search survival guide articles"
+                      />
+                    </label>
+
+                    <div className="flex gap-2 overflow-x-auto pb-1">
                       <button
-                        key={category.id}
                         type="button"
-                        onClick={() => setCategoryFilter(category.id)}
-                        aria-pressed={categoryFilter === category.id}
+                        onClick={() => setCategoryFilter("all")}
+                        aria-pressed={categoryFilter === "all"}
                         className={`shrink-0 border px-3 py-1.5 text-xs ${
-                          categoryFilter === category.id
+                          categoryFilter === "all"
                             ? "border-orange-400 text-orange-100"
                             : "border-orange-500/20 text-orange-200/60"
                         }`}
                       >
-                        {category.shortTitle}
+                        All topics
                       </button>
-                    ))}
-                  </div>
-
-                  {filteredArticles.length > 0 ? (
-                    <div className="grid gap-3 md:grid-cols-2">
-                      {filteredArticles.map((article) => {
-                        const category = GUIDE_CATEGORIES.find(
-                          ({ id }) => id === article.categoryId,
-                        );
-                        return (
-                          <button
-                            key={article.id}
-                            type="button"
-                            onClick={() => openArticle(article.id, "browse")}
-                            className="group flex h-full flex-col items-start border border-orange-500/25 bg-black/35 p-4 text-left transition hover:border-orange-400/70 hover:bg-orange-950/20 focus-visible:outline-2 focus-visible:outline-orange-400"
-                          >
-                            <span className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-orange-500">
-                              {category?.title}
-                            </span>
-                            <span className="mt-2 text-base font-semibold text-orange-200 group-hover:text-white">
-                              {article.title}
-                            </span>
-                            <span className="mt-2 text-sm leading-6 text-orange-100/65">
-                              {article.introduction}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="border border-orange-500/20 p-5 text-sm text-orange-100/60">
-                      No articles match that search. Try another term or choose
-                      a different category.
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {view === "hazards" && (
-                <div className="space-y-5 p-4 sm:p-6">
-                  <div>
-                    <h2 className="flex items-center gap-2 text-lg font-semibold text-orange-200">
-                      <ShieldAlert
-                        className="h-5 w-5 text-orange-400"
-                        aria-hidden="true"
-                      />
-                      Hazard cards
-                    </h2>
-                    <p className="mt-2 max-w-3xl text-sm leading-6 text-orange-100/70">
-                      Educational summaries only. No numerical danger ratings
-                      are assigned because this prototype has no validated
-                      hazard-scoring method or real-time measurements.
-                    </p>
-                  </div>
-                  <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                    {HAZARD_CARDS.map((hazard) => (
-                      <article
-                        key={hazard.name}
-                        className="flex flex-col border border-orange-500/25 bg-black/35 p-4"
-                      >
-                        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-orange-500">
-                          {hazard.category}
-                        </p>
-                        <h3 className="mt-2 text-base font-semibold text-orange-200">
-                          {hazard.name}
-                        </h3>
-                        <p className="mt-2 text-sm leading-6 text-orange-100/75">
-                          {hazard.explanation}
-                        </p>
-                        <p className="mt-3 border-l border-orange-500/50 pl-3 text-xs leading-5 text-orange-100/60">
-                          {hazard.whyItMatters}
-                        </p>
+                      {GUIDE_CATEGORIES.map((category) => (
                         <button
+                          key={category.id}
                           type="button"
-                          onClick={() =>
-                            openArticle(hazard.articleId, "hazards")
-                          }
-                          className="mt-4 self-start text-xs font-semibold text-orange-300 underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-orange-400"
+                          onClick={() => setCategoryFilter(category.id)}
+                          aria-pressed={categoryFilter === category.id}
+                          className={`shrink-0 border px-3 py-1.5 text-xs ${
+                            categoryFilter === category.id
+                              ? "border-orange-400 text-orange-100"
+                              : "border-orange-500/20 text-orange-200/60"
+                          }`}
                         >
-                          Read related article
+                          {category.shortTitle}
                         </button>
-                      </article>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {view === "article" && selectedArticle && (
-                <article className="space-y-7 p-4 sm:p-6 lg:p-8">
-                  <button
-                    type="button"
-                    onClick={() => setView(returnView)}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-orange-300 hover:text-white focus-visible:outline-2 focus-visible:outline-orange-400"
-                  >
-                    <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                    Back to{" "}
-                    {returnView === "hazards" ? "hazard cards" : "field guide"}
-                  </button>
-
-                  <header className="max-w-4xl border-b border-orange-500/25 pb-5">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-500">
-                      {selectedCategory?.title}
-                    </p>
-                    <h2 className="mt-2 text-2xl font-bold text-orange-100 sm:text-3xl">
-                      {selectedArticle.title}
-                    </h2>
-                    <p className="mt-3 text-base leading-7 text-orange-100/75">
-                      {selectedArticle.introduction}
-                    </p>
-                  </header>
-
-                  <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_18rem]">
-                    <div className="space-y-7">
-                      <section className="space-y-2">
-                        <h3 className="text-sm font-semibold uppercase tracking-wider text-orange-300">
-                          Overview
-                        </h3>
-                        <p className="text-sm leading-6 text-orange-100/80">
-                          {selectedArticle.overview}
-                        </p>
-                      </section>
-                      <section className="space-y-2 border-l-2 border-orange-500/70 pl-4">
-                        <h3 className="text-sm font-semibold uppercase tracking-wider text-orange-300">
-                          Why it matters
-                        </h3>
-                        <p className="text-sm leading-6 text-orange-100/80">
-                          {selectedArticle.whyItMatters}
-                        </p>
-                      </section>
-                      <BulletSection
-                        heading="Key information"
-                        items={selectedArticle.keyInformation}
-                      />
-                      {selectedArticle.potentialRisks && (
-                        <BulletSection
-                          heading="Potential risks"
-                          items={selectedArticle.potentialRisks}
-                        />
-                      )}
-                      {selectedArticle.whatToMonitor && (
-                        <BulletSection
-                          heading="What to monitor"
-                          items={selectedArticle.whatToMonitor}
-                        />
-                      )}
-                      {selectedArticle.safetyConsiderations && (
-                        <BulletSection
-                          heading="Safety considerations"
-                          items={selectedArticle.safetyConsiderations}
-                        />
-                      )}
-
-                      {selectedArticle.id === "past-missions" && (
-                        <section className="space-y-3">
-                          <div>
-                            <h3 className="text-sm font-semibold uppercase tracking-wider text-orange-300">
-                              Mission records
-                            </h3>
-                            <p className="mt-1 text-xs leading-5 text-orange-100/55">
-                              Observed mission results are distinguished from
-                              possible future applications in each record.
-                            </p>
-                          </div>
-                          <div className="space-y-3">
-                            {MARS_MISSIONS.map((mission) => (
-                              <MissionRecord
-                                key={mission.name}
-                                mission={mission}
-                              />
-                            ))}
-                          </div>
-                        </section>
-                      )}
+                      ))}
                     </div>
 
-                    <aside className="space-y-6">
-                      {selectedArticle.relatedLayers &&
-                        selectedArticle.relatedLayers.length > 0 && (
+                    {filteredArticles.length > 0 ? (
+                      <div className="grid gap-3 md:grid-cols-2">
+                        {filteredArticles.map((article) => {
+                          const category = GUIDE_CATEGORIES.find(
+                            ({ id }) => id === article.categoryId,
+                          );
+                          return (
+                            <button
+                              key={article.id}
+                              type="button"
+                              onClick={() => openArticle(article.id, "browse")}
+                              className="group flex h-full flex-col items-start border border-orange-500/25 bg-black/35 p-4 text-left transition hover:border-orange-400/70 hover:bg-orange-950/20 focus-visible:outline-2 focus-visible:outline-orange-400"
+                            >
+                              <span className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-orange-500">
+                                {category?.title}
+                              </span>
+                              <span className="mt-2 text-base font-semibold text-orange-200 group-hover:text-white">
+                                {article.title}
+                              </span>
+                              <span className="mt-2 text-sm leading-6 text-orange-100/65">
+                                {article.introduction}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="border border-orange-500/20 p-5 text-sm text-orange-100/60">
+                        No articles match that search. Try another term or
+                        choose a different category.
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {view === "hazards" && (
+                  <div className="space-y-5 p-4 sm:p-6">
+                    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                      {HAZARD_CARDS.map((hazard) => (
+                        <article
+                          key={hazard.name}
+                          className="flex flex-col border border-orange-500/25 bg-black/35 p-4"
+                        >
+                          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-orange-500">
+                            {hazard.category}
+                          </p>
+                          <h3 className="mt-2 text-base font-semibold text-orange-200">
+                            {hazard.name}
+                          </h3>
+                          <p className="mt-2 text-sm leading-6 text-orange-100/75">
+                            {hazard.explanation}
+                          </p>
+                          <p className="mt-3 border-l border-orange-500/50 pl-3 text-xs leading-5 text-orange-100/60">
+                            {hazard.whyItMatters}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openArticle(hazard.articleId, "hazards")
+                            }
+                            className="mt-4 self-start text-xs font-semibold text-orange-300 underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-orange-400"
+                          >
+                            Read related article
+                          </button>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {view === "article" && selectedArticle && (
+                  <article className="space-y-7 p-4 sm:p-6 lg:p-8">
+                    <button
+                      type="button"
+                      onClick={() => setView(returnView)}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-orange-300 hover:text-white focus-visible:outline-2 focus-visible:outline-orange-400"
+                    >
+                      <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                      Back to{" "}
+                      {returnView === "hazards"
+                        ? "hazard cards"
+                        : "field guide"}
+                    </button>
+
+                    <header className="max-w-4xl border-b border-orange-500/25 pb-5">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-500">
+                        {selectedCategory?.title}
+                      </p>
+                      <h2 className="mt-2 text-2xl font-bold text-orange-100 sm:text-3xl">
+                        {selectedArticle.title}
+                      </h2>
+                      <p className="mt-3 text-base leading-7 text-orange-100/75">
+                        {selectedArticle.introduction}
+                      </p>
+                    </header>
+
+                    <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_18rem]">
+                      <div className="space-y-7">
+                        <section className="space-y-2">
+                          <h3 className="text-sm font-semibold uppercase tracking-wider text-orange-300">
+                            Overview
+                          </h3>
+                          <p className="text-sm leading-6 text-orange-100/80">
+                            {selectedArticle.overview}
+                          </p>
+                        </section>
+                        <section className="space-y-2 border-l-2 border-orange-500/70 pl-4">
+                          <h3 className="text-sm font-semibold uppercase tracking-wider text-orange-300">
+                            Why it matters
+                          </h3>
+                          <p className="text-sm leading-6 text-orange-100/80">
+                            {selectedArticle.whyItMatters}
+                          </p>
+                        </section>
+                        <BulletSection
+                          heading="Key information"
+                          items={selectedArticle.keyInformation}
+                        />
+                        {selectedArticle.potentialRisks && (
+                          <BulletSection
+                            heading="Potential risks"
+                            items={selectedArticle.potentialRisks}
+                          />
+                        )}
+                        {selectedArticle.whatToMonitor && (
+                          <BulletSection
+                            heading="What to monitor"
+                            items={selectedArticle.whatToMonitor}
+                          />
+                        )}
+                        {selectedArticle.id === "past-missions" && (
+                          <section className="space-y-3">
+                            <div>
+                              <h3 className="text-sm font-semibold uppercase tracking-wider text-orange-300">
+                                Mission records
+                              </h3>
+                              <p className="mt-1 text-xs leading-5 text-orange-100/55">
+                                Observed mission results are distinguished from
+                                possible future applications in each record.
+                              </p>
+                            </div>
+                            <div className="space-y-3">
+                              {MARS_MISSIONS.map((mission) => (
+                                <MissionRecord
+                                  key={mission.name}
+                                  mission={mission}
+                                />
+                              ))}
+                            </div>
+                          </section>
+                        )}
+                      </div>
+
+                      <aside className="space-y-6">
+                        {selectedArticle.relatedLayers &&
+                          selectedArticle.relatedLayers.length > 0 && (
+                            <section className="space-y-3 border border-orange-500/20 bg-black/30 p-4">
+                              <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-orange-300">
+                                <Layers
+                                  className="h-4 w-4"
+                                  aria-hidden="true"
+                                />
+                                Related ARES map layers
+                              </h3>
+                              <ul className="space-y-3">
+                                {selectedArticle.relatedLayers.map((layer) => {
+                                  const layerId = layer.mapLayerId;
+                                  const isAvailable =
+                                    layer.availability === "available" &&
+                                    layerId !== undefined;
+                                  return (
+                                    <li key={layer.label}>
+                                      {isAvailable ? (
+                                        <button
+                                          type="button"
+                                          disabled={
+                                            !map ||
+                                            (!onLayerChange &&
+                                              !onRegionalLayerVisibilityChange)
+                                          }
+                                          onClick={() =>
+                                            layerId && handleLayerClick(layerId)
+                                          }
+                                          className="text-left text-sm text-orange-200 underline decoration-orange-500/50 underline-offset-4 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                          {layer.label}
+                                        </button>
+                                      ) : (
+                                        <p className="text-sm text-orange-100/45">
+                                          {layer.label}{" "}
+                                          <span className="text-[0.65rem] uppercase tracking-wider">
+                                            not available in this map
+                                          </span>
+                                        </p>
+                                      )}
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            </section>
+                          )}
+
+                        {articleLandmarks && articleLandmarks.length > 0 && (
                           <section className="space-y-3 border border-orange-500/20 bg-black/30 p-4">
                             <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-orange-300">
-                              <Layers className="h-4 w-4" aria-hidden="true" />
-                              Related ARES map layers
+                              <MapPin className="h-4 w-4" aria-hidden="true" />
+                              Related landmarks
                             </h3>
-                            <ul className="space-y-3">
-                              {selectedArticle.relatedLayers.map((layer) => {
-                                const layerId = layer.mapLayerId;
-                                const isAvailable =
-                                  layer.availability === "available" &&
-                                  layerId !== undefined;
-                                return (
-                                  <li key={layer.label}>
-                                    {isAvailable ? (
-                                      <button
-                                        type="button"
-                                        disabled={
-                                          !map ||
-                                          (!onLayerChange &&
-                                            !onRegionalLayerVisibilityChange)
-                                        }
-                                        onClick={() =>
-                                          layerId && handleLayerClick(layerId)
-                                        }
-                                        className="text-left text-sm text-orange-200 underline decoration-orange-500/50 underline-offset-4 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                                      >
-                                        {layer.label}
-                                      </button>
-                                    ) : (
-                                      <p className="text-sm text-orange-100/45">
-                                        {layer.label}{" "}
-                                        <span className="text-[0.65rem] uppercase tracking-wider">
-                                          not available in this map
-                                        </span>
-                                      </p>
-                                    )}
-                                  </li>
-                                );
-                              })}
+                            <ul className="space-y-2">
+                              {articleLandmarks.map((landmark) => (
+                                <li key={landmark.id}>
+                                  <button
+                                    type="button"
+                                    disabled={!map}
+                                    onClick={() => navigateToLandmark(landmark)}
+                                    className="w-full text-left text-sm text-orange-200 underline decoration-orange-500/50 underline-offset-4 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                                  >
+                                    {landmark.name}
+                                    <span className="mt-1 block font-mono text-[0.65rem] text-orange-100/45">
+                                      {landmark.coordinates[1].toFixed(2)}° lat,{" "}
+                                      {landmark.coordinates[0].toFixed(2)}° lon
+                                    </span>
+                                  </button>
+                                </li>
+                              ))}
                             </ul>
                           </section>
                         )}
+                      </aside>
+                    </div>
 
-                      {articleLandmarks && articleLandmarks.length > 0 && (
-                        <section className="space-y-3 border border-orange-500/20 bg-black/30 p-4">
-                          <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-orange-300">
-                            <MapPin className="h-4 w-4" aria-hidden="true" />
-                            Related landmarks
-                          </h3>
-                          <ul className="space-y-2">
-                            {articleLandmarks.map((landmark) => (
-                              <li key={landmark.id}>
-                                <button
-                                  type="button"
-                                  disabled={!map}
-                                  onClick={() => navigateToLandmark(landmark)}
-                                  className="w-full text-left text-sm text-orange-200 underline decoration-orange-500/50 underline-offset-4 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    {articleImages.length > 0 && (
+                      <section className="space-y-3">
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-orange-300">
+                          Related images
+                        </h3>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          {articleImages.map((image) => (
+                            <figure
+                              key={image.src}
+                              className="overflow-hidden border border-orange-500/25 bg-black/40"
+                            >
+                              <Image
+                                src={image.src}
+                                alt={image.alt}
+                                width={image.width}
+                                height={image.height}
+                                className="h-auto max-h-64 w-full object-contain"
+                                sizes="(max-width: 640px) 100vw, 50vw"
+                              />
+                              <figcaption className="space-y-1 p-3 text-xs leading-5 text-orange-100/65">
+                                <p>{image.caption}</p>
+                                <p>Image: {image.attribution}</p>
+                                <a
+                                  href={image.sourceUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-orange-300 underline underline-offset-2 hover:text-white"
                                 >
-                                  {landmark.name}
-                                  <span className="mt-1 block font-mono text-[0.65rem] text-orange-100/45">
-                                    {landmark.coordinates[1].toFixed(2)}° lat,{" "}
-                                    {landmark.coordinates[0].toFixed(2)}° lon
-                                  </span>
-                                </button>
-                              </li>
-                            ))}
-                          </ul>
-                        </section>
-                      )}
-                    </aside>
-                  </div>
+                                  View image source
+                                  <ExternalLink
+                                    className="h-3 w-3"
+                                    aria-hidden="true"
+                                  />
+                                </a>
+                              </figcaption>
+                            </figure>
+                          ))}
+                        </div>
+                      </section>
+                    )}
 
-                  {articleImages.length > 0 && (
-                    <section className="space-y-3">
+                    <section className="space-y-3 border-t border-orange-500/20 pt-5">
                       <h3 className="text-sm font-semibold uppercase tracking-wider text-orange-300">
-                        Related images
+                        References and further reading
                       </h3>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {articleImages.map((image) => (
-                          <figure
-                            key={image.src}
-                            className="overflow-hidden border border-orange-500/25 bg-black/40"
-                          >
-                            <Image
-                              src={image.src}
-                              alt={image.alt}
-                              width={image.width}
-                              height={image.height}
-                              className="h-auto max-h-64 w-full object-contain"
-                              sizes="(max-width: 640px) 100vw, 50vw"
-                            />
-                            <figcaption className="space-y-1 p-3 text-xs leading-5 text-orange-100/65">
-                              <p>{image.caption}</p>
-                              <p>Image: {image.attribution}</p>
-                              <a
-                                href={image.sourceUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1 text-orange-300 underline underline-offset-2 hover:text-white"
-                              >
-                                View image source
-                                <ExternalLink
-                                  className="h-3 w-3"
-                                  aria-hidden="true"
-                                />
-                              </a>
-                            </figcaption>
-                          </figure>
-                        ))}
-                      </div>
-                    </section>
-                  )}
-
-                  <section className="space-y-3 border-t border-orange-500/20 pt-5">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-orange-300">
-                      References and further reading
-                    </h3>
-                    <ul className="grid gap-2 sm:grid-cols-2">
-                      {selectedArticle.references.map((reference) => (
-                        <li key={reference.url}>
-                          <a
-                            href={reference.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex items-start gap-2 border border-orange-500/15 p-3 text-sm text-orange-200 hover:border-orange-400/50 hover:text-white"
-                          >
-                            <ExternalLink
-                              className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-400"
-                              aria-hidden="true"
-                            />
-                            <span>
-                              {reference.title}
-                              <span className="mt-1 block text-xs text-orange-100/45">
-                                {reference.publisher}
+                      <ul className="grid gap-2 sm:grid-cols-2">
+                        {selectedArticle.references.map((reference) => (
+                          <li key={reference.url}>
+                            <a
+                              href={reference.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-start gap-2 border border-orange-500/15 p-3 text-sm text-orange-200 hover:border-orange-400/50 hover:text-white"
+                            >
+                              <ExternalLink
+                                className="mt-0.5 h-3.5 w-3.5 shrink-0 text-orange-400"
+                                aria-hidden="true"
+                              />
+                              <span>
+                                {reference.title}
+                                <span className="mt-1 block text-xs text-orange-100/45">
+                                  {reference.publisher}
+                                </span>
                               </span>
-                            </span>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                </article>
-              )}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  </article>
+                )}
 
-              {view === "article" && !selectedArticle && (
-                <div className="p-6">
-                  <p className="text-sm text-orange-100/70">
-                    This guide article is unavailable.
-                  </p>
+                {view === "article" && !selectedArticle && (
+                  <div className="p-6">
+                    <p className="text-sm text-orange-100/70">
+                      This guide article is unavailable.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setView("browse")}
+                      className="mt-3 text-sm text-orange-300 underline"
+                    >
+                      Return to field guide
+                    </button>
+                  </div>
+                )}
+              </main>
+
+              <footer className="flex shrink-0 items-center justify-between gap-4 border-t border-orange-500/20 px-4 py-2 text-[0.65rem] text-orange-100/45 sm:px-6">
+                {view === "article" && (
                   <button
                     type="button"
-                    onClick={() => setView("browse")}
-                    className="mt-3 text-sm text-orange-300 underline"
+                    onClick={() => setView(returnView)}
+                    className="inline-flex items-center gap-1 text-orange-300 hover:text-white"
                   >
-                    Return to field guide
+                    <ArrowLeft className="h-3 w-3" aria-hidden="true" />
+                    Back
                   </button>
-                </div>
-              )}
-            </main>
-
-            <footer className="flex shrink-0 items-center justify-between gap-4 border-t border-orange-500/20 px-4 py-2 text-[0.65rem] text-orange-100/45 sm:px-6">
-              <span>Educational prototype · not operational guidance</span>
-              {view === "article" && (
-                <button
-                  type="button"
-                  onClick={() => setView(returnView)}
-                  className="inline-flex items-center gap-1 text-orange-300 hover:text-white"
-                >
-                  <ArrowLeft className="h-3 w-3" aria-hidden="true" />
-                  Back
-                </button>
-              )}
-            </footer>
+                )}
+              </footer>
             </motion.div>
           </motion.div>
         )}

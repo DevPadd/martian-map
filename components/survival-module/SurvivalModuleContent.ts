@@ -27,7 +27,6 @@ export type GuideArticle = {
   keyInformation: string[];
   potentialRisks?: string[];
   whatToMonitor?: string[];
-  safetyConsiderations?: string[];
   relatedLayers?: RelatedMapLayer[];
   relatedLandmarks?: string[];
   references: GuideReference[];
@@ -182,10 +181,6 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
       "Weather and atmospheric measurements from the relevant lander or rover; conditions vary by place and time.",
       "Map projection, coordinate convention, data resolution, and acquisition date before interpreting imagery.",
     ],
-    safetyConsiderations: [
-      "The map is a visualization and is not a navigation-certified terrain product.",
-      "Do not infer a safe route, landing location, or human exposure limit from a single image or global dataset.",
-    ],
     relatedLayers: [
       {
         label: "Global MOLA/HRSC hillshade",
@@ -237,10 +232,6 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
       "Suit pressure, oxygen and carbon-dioxide system status, thermal-control indicators, battery state, communications, and suit-integrity telemetry as defined by a qualified mission system.",
       "Dust exposure and changes in mobility, visibility, or equipment condition.",
     ],
-    safetyConsiderations: [
-      "No values, limits, fault responses, or emergency steps are provided here; use only approved suit documentation and crew training.",
-      "Robotic mission hardware such as MOXIE is a technology demonstration, not a human life-support system.",
-    ],
     relatedLandmarks: ["perseverance-landing-site", "curiosity-landing-site"],
     references: [HUMANS_TO_MARS, HUMAN_RESEARCH_PROGRAM, PERSEVERANCE],
   },
@@ -279,10 +270,6 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
       "Data resolution, acquisition date, illumination, stereo coverage, and uncertainty when available.",
       "Terrain changes across multiple image scales and from independent data products.",
       "Local slope, roughness, rock abundance, and known limitations of the selected dataset.",
-    ],
-    safetyConsiderations: [
-      "Do not use this prototype to select or certify EVA routes.",
-      "A human mission would require validated terrain products, operational constraints, crew training, and mission-specific review.",
     ],
     relatedLayers: [
       {
@@ -341,10 +328,6 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
       "Radiation environment using suitable instruments and mission-specific exposure analysis.",
       "Dust accumulation and environmental control data for relevant equipment.",
     ],
-    safetyConsiderations: [
-      "This guide provides no exposure limits, protective-equipment specifications, or treatment guidance.",
-      "Distinguish measured observations from interpretations and from hypothetical future mission implications.",
-    ],
     relatedLayers: [
       {
         label: "Global MOLA/HRSC hillshade",
@@ -397,10 +380,6 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     whatToMonitor: [
       "Crew and vehicle location, planned-versus-observed route context, communication status, environmental information, and equipment telemetry as specified in mission procedures.",
     ],
-    safetyConsiderations: [
-      "This article is not an EVA checklist and does not provide operational boundaries or emergency response steps.",
-      "All EVA decisions belong to trained crews and mission control operating under approved procedures.",
-    ],
     relatedLayers: [
       {
         label: "Jezero HiRISE ortho mosaic",
@@ -451,10 +430,6 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     whatToMonitor: [
       "Habitat environmental sensors, system health, power generation and storage, consumable inventories, and maintenance trends as defined by the mission.",
     ],
-    safetyConsiderations: [
-      "No operational response instructions or numerical safety thresholds are provided.",
-      "NASA demonstrations such as MOXIE inform technology development but do not constitute a complete human habitat life-support system.",
-    ],
     relatedLandmarks: ["perseverance-landing-site"],
     references: [HUMANS_TO_MARS, HUMAN_RESEARCH_PROGRAM, PERSEVERANCE],
   },
@@ -488,10 +463,6 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     ],
     whatToMonitor: [
       "Link status, relay opportunities, message timestamps, crew location, and the agreed communication protocol.",
-    ],
-    safetyConsiderations: [
-      "This guide does not prescribe emergency messages, mission abort criteria, or loss-of-communication responses.",
-      "Operational plans must be defined, verified, trained, and approved for a specific mission.",
     ],
     relatedLandmarks: ["perseverance-landing-site", "curiosity-landing-site"],
     references: [HUMANS_TO_MARS, PERSEVERANCE, CURIOSITY],
@@ -528,10 +499,6 @@ export const GUIDE_ARTICLES: GuideArticle[] = [
     whatToMonitor: [
       "Crew health and wellbeing through private, validated medical and human-factors systems—not through this map interface.",
       "Sleep, workload, nutrition, exercise, and team factors using approved mission protocols.",
-    ],
-    safetyConsiderations: [
-      "This educational article is not medical advice or a clinical screening tool.",
-      "No diagnosis, treatment, exercise prescription, or medical emergency guidance is provided.",
     ],
     relatedLandmarks: ["perseverance-landing-site", "curiosity-landing-site"],
     references: [HUMANS_TO_MARS, HUMAN_RESEARCH_PROGRAM, MARS_FACTS],
