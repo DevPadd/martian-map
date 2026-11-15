@@ -26,6 +26,7 @@ import {
 import { createLandmarkLayer } from "./landmarks/createLandmarkLayer";
 import type VectorLayer from "ol/layer/Vector.js";
 import type VectorSource from "ol/source/Vector.js";
+import { createMissionDataLayers } from "./missionDataLayers";
 
 const GLOBAL_MARS_LAYER_INDEX = 1;
 
@@ -92,8 +93,15 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
   const globalSourceKeys = useRef<EventsKey[]>([]);
   const pointerMoveKey = useRef<EventsKey | undefined>(undefined);
   const selectedLayerIndexRef = useRef(0);
+  const roverPathLayer = useRef<VectorLayer<VectorSource> | null>(null);
+  const samplingLocationsLayer = useRef<VectorLayer<VectorSource> | null>(null);
+  const roverPathVisibleRef = useRef(true);
+  const samplingLocationsVisibleRef = useRef(true);
 
   const [selectedLayerIndex, setSelectedLayerIndex] = useState(0);
+  const [roverPathVisible, setRoverPathVisible] = useState(true);
+  const [samplingLocationsVisible, setSamplingLocationsVisible] =
+    useState(true);
   const [status, setStatus] = useState(
     `Loading ${MAP_LAYERS[0].name} imagery...`,
   );
@@ -111,6 +119,21 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
     setStatus(`Loading ${layerConfig.name} imagery...`);
     setSelectedLayerIndex(index);
   }, []);
+
+  const onRoverPathVisibilityChange = useCallback((visible: boolean) => {
+    roverPathVisibleRef.current = visible;
+    roverPathLayer.current?.setVisible(visible);
+    setRoverPathVisible(visible);
+  }, []);
+
+  const onSamplingLocationsVisibilityChange = useCallback(
+    (visible: boolean) => {
+      samplingLocationsVisibleRef.current = visible;
+      samplingLocationsLayer.current?.setVisible(visible);
+      setSamplingLocationsVisible(visible);
+    },
+    [],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -161,11 +184,12 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
           return;
         }
 
-        const [globalImage, selectedImage] = await Promise.all([
+        const [globalImage, selectedImage, missionDataLayers] = await Promise.all([
           loadWmtsLayer(MAP_LAYERS[GLOBAL_MARS_LAYER_INDEX], controller.signal),
           selectedLayerIndex === GLOBAL_MARS_LAYER_INDEX
             ? Promise.resolve(null)
             : loadWmtsLayer(layerConfig, controller.signal),
+          createMissionDataLayers(controller.signal),
         ]);
 
         if (cancelled || !mapElement.current) return;
@@ -220,9 +244,21 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
               : (selectedImage?.resolutions.length ?? globalTileCount) - 1,
         });
         const landmarkLayer = createLandmarkLayer();
+        missionDataLayers.roverPathLayer.setVisible(
+          roverPathVisibleRef.current,
+        );
+        missionDataLayers.samplingLocationsLayer.setVisible(
+          samplingLocationsVisibleRef.current,
+        );
         const map = new Map({
           target: mapElement.current,
-          layers: [baseLayer, nextImageryLayer, landmarkLayer],
+          layers: [
+            baseLayer,
+            nextImageryLayer,
+            missionDataLayers.roverPathLayer,
+            missionDataLayers.samplingLocationsLayer,
+            landmarkLayer,
+          ],
           view,
           controls: defaultControls({ zoom: false }),
         });
@@ -235,6 +271,9 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
 
         globalLayer.current = baseLayer;
         imageryLayer.current = nextImageryLayer;
+        roverPathLayer.current = missionDataLayers.roverPathLayer;
+        samplingLocationsLayer.current =
+          missionDataLayers.samplingLocationsLayer;
         mapInstance.current = map;
         setMap(map);
         setLandmarkLayer(landmarkLayer);
@@ -276,6 +315,8 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
       mapInstance.current = null;
       imageryLayer.current = null;
       globalLayer.current = null;
+      roverPathLayer.current = null;
+      samplingLocationsLayer.current = null;
       globalMaxZoom.current = 0;
     },
     [],
@@ -286,7 +327,11 @@ export function useMarsMap(mapElement: RefObject<HTMLDivElement | null>) {
     landmarkLayer,
     map,
     onLayerChange,
+    onRoverPathVisibilityChange,
+    onSamplingLocationsVisibilityChange,
+    roverPathVisible,
     selectedLayerIndex,
+    samplingLocationsVisible,
     status,
   };
 }

@@ -2,7 +2,7 @@ import type Projection from "ol/proj/Projection.js";
 import proj4 from "proj4";
 import { register } from "ol/proj/proj4.js";
 
-const MARS_CRS = "urn:ogc:def:crs:EPSG::104905";
+export const MARS_CRS = "urn:ogc:def:crs:EPSG::104905";
 const MARS_EQUATORIAL_RADIUS = 3_396_190;
 const MARS_INVERSE_FLATTENING = 169.894447223612;
 const MARS_FLATTENING = 1 / MARS_INVERSE_FLATTENING;

@@ -41,13 +41,13 @@ Demo: https://martian-map-eight.vercel.app/
 - [x] multiple layers (CTX, Topography, etc)
 - [x] clickable landmarks, which opens a popup and displays informations
 - [ ] Rover traverse path?
-- [ ] Distance calculator
+- [x] Distance calculator
 
 ## Would be nice to have
 
 - [ ] AI chatbot
 - [ ] All landmarks on global mars
-- [ ] Add checkpoints by user themselves
+- [ ] Add feature that allows user to add their own checkpoint/landmark
 
 ## Running Locally
 

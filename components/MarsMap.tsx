@@ -24,7 +24,11 @@ export default function MarsMap() {
     landmarkLayer,
     map,
     onLayerChange,
+    onRoverPathVisibilityChange,
+    onSamplingLocationsVisibilityChange,
+    roverPathVisible,
     selectedLayerIndex,
+    samplingLocationsVisible,
   } = useMarsMap(mapElement);
   const { closePopup, selectedLandmark } = useLandmarkPopup(
     map,
@@ -39,6 +43,12 @@ export default function MarsMap() {
         cursorCoordinates={cursorCoordinates}
         onLayerChange={onLayerChange}
         selectedLayerIndex={selectedLayerIndex}
+        roverPathVisible={roverPathVisible}
+        samplingLocationsVisible={samplingLocationsVisible}
+        onRoverPathVisibilityChange={onRoverPathVisibilityChange}
+        onSamplingLocationsVisibilityChange={
+          onSamplingLocationsVisibilityChange
+        }
       />
       <GuideBookFAB />
       <div className="absolute bottom-20 right-12 z-50">
