@@ -28,7 +28,7 @@ export default function MissionTimeline({
         type="button"
         aria-controls="jezero-mission-timeline"
         aria-expanded={false}
-        className="fixed left-2 top-24 z-20 flex items-center gap-2 border border-orange-500/60 bg-black/90 px-3 py-2 text-xs text-orange-300 shadow-lg shadow-black/40 hover:bg-orange-950/80 focus-visible:outline-2 focus-visible:outline-orange-400 sm:top-20"
+        className="fixed left-2 top-24 z-20 flex items-center gap-2 border border-orange-500/60 bg-black/90 px-3 py-2 text-xs text-orange-500 shadow-lg shadow-black/40 hover:bg-orange-950/80 focus-visible:outline-2 focus-visible:outline-orange-400 sm:top-20"
         onClick={() => onVisibilityChange(true)}
       >
         <CalendarDays className="h-4 w-4" aria-hidden="true" />

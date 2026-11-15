@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { LocateFixed, MapPinned, ShieldAlert } from "lucide-react";
+import { LocateFixed, MapPinned, ShieldAlert, BadgeInfo } from "lucide-react";
 import type OLMap from "ol/Map.js";
 import Image from "next/image";
 
@@ -164,12 +164,13 @@ export default function JezeroLifeSearchMission({
               type="button"
               onClick={() => setIsOpen(true)}
               aria-expanded={false}
-              className="border border-orange-500/70 bg-black/95 px-3 py-2 font-semibold text-orange-300 shadow-lg shadow-black/50 hover:bg-orange-950/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
+              className="border border-orange-500/70 flex gap-2 items-center bg-black/95 px-3 py-2  text-orange-500 shadow-lg shadow-black/50 hover:bg-orange-950/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
               transition={{ duration: 0.16 }}
             >
+              <BadgeInfo className="h-4 w-4" />
               Mission briefing
             </motion.button>
           )}
