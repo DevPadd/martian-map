@@ -17,7 +17,7 @@ export default function LandmarkSidebar({
 
   return (
     <aside
-      className="fixed inset-y-0 left-0 z-[60] w-full max-w-md overflow-y-auto border-r border-red-500/40 bg-black/95 text-red-100 shadow-2xl"
+      className="fixed inset-y-0 left-0 z-999 w-full max-w-md overflow-y-auto border-r border-red-500/40 bg-black/95 text-red-100 shadow-2xl"
       aria-labelledby="landmark-sidebar-title"
     >
       <div className="sticky top-0 z-10 flex items-start justify-between border-b border-red-500/30 bg-black/95 p-5">
